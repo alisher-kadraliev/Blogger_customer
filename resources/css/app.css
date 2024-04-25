@@ -74,3 +74,6 @@
       @apply bg-background text-foreground;
     }
   }
+    .transition-custom{
+        @apply transition-all ease-in-out duration-300 active:scale-90
+    }

@@ -1,7 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import {Button} from "@/Components/ui/button.jsx";
-
 export default function Dashboard({ auth }) {
     return (
         <AuthenticatedLayout
