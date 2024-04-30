@@ -16,17 +16,32 @@ class PostController extends Controller
     {
         $query = Post::query()->with('category');
         $posts = $query->paginate(5)->onEachSide(1);
+        $statuses = Post::select('status')->distinct()->pluck('status');
+
         return Inertia::render('Post/Index',
-            ['posts' => $posts,]);
+            ['posts' => $posts,
+                'statuses' => $statuses,
+                ]);
     }
     public function PostTable()
     {
         $query = Post::query()->with('category');
         $posts = $query->paginate(5)->onEachSide(1);
-        return Inertia::render('Post/PostTable',
-            ['posts' => $posts,]);
-    }
+        $statuses = Post::select('status')->distinct()->pluck('status');
 
+        return Inertia::render('Post/PostTable',
+            ['posts' => $posts,
+                'statuses' => $statuses,
+                ]);
+    }
+public function updateStatus(Request $request, Post $post){
+        $validatedData = $request->validate([
+            'status' => 'required|string',
+        ]);
+        $post->status = $validatedData['status'];
+        $post->save();
+        return redirect()->back();
+}
     /**
      * Show the form for creating a new resource.
      */

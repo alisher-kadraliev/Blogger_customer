@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, usePage } from "@inertiajs/react";
+import {Link, router, usePage} from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
 
 import { CheckCheck, CircleHelp, EllipsisVertical, Timer } from "lucide-react";
@@ -29,9 +29,26 @@ import {
     SheetTrigger,
 } from "@/Components/ui/sheet";
 
-const PostTable = ({ posts }) => {
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/Components/ui/select";
+import toast, {Toaster} from "react-hot-toast";
+
+const PostTable = ({ posts, statuses }) => {
     const { t } = useTranslation();
     const user = usePage().props.auth.user;
+
+    function handleStatusChange(e, postId) {
+        const newStatus = e.target.value;
+        router.patch(`/posts/${postId}/update-status`, {
+            status: newStatus,
+        });
+        toast.success("Güncellendi");
+    }
 
     return (
         <React.Fragment>
@@ -46,6 +63,7 @@ const PostTable = ({ posts }) => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
+                    {posts.status}
                     {posts.data.map((item, id) => (
                         <TableRow key={id}>
                             <TableCell className="font-bold">
@@ -104,7 +122,41 @@ const PostTable = ({ posts }) => {
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div></div>
+                                                            <div>
+                                                                <select
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) =>
+                                                                        handleStatusChange(
+                                                                            e,
+                                                                            item.id,
+                                                                        )
+                                                                    }
+                                                                    value={
+                                                                        item.status
+                                                                    }
+                                                                >
+                                                                    {statuses.map(
+                                                                        (
+                                                                            statusChange,
+                                                                        ) => (
+                                                                            <option
+                                                                                key={
+                                                                                    statusChange
+                                                                                }
+                                                                                value={
+                                                                                    statusChange
+                                                                                }
+                                                                            >
+                                                                                {t(
+                                                                                    statusChange,
+                                                                                )}
+                                                                            </option>
+                                                                        ),
+                                                                    )}
+                                                                    <option value=""></option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </SheetTitle>
                                                     <SheetDescription>
@@ -130,6 +182,7 @@ const PostTable = ({ posts }) => {
                     ))}
                 </TableBody>
             </Table>
+                <Toaster />
         </React.Fragment>
     );
 };
