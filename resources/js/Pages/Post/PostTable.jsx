@@ -38,8 +38,7 @@ import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from "@/Components/ui/popover"
-
+} from "@/Components/ui/popover";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
@@ -49,6 +48,7 @@ const PostTable = ({ posts, statuses }) => {
     const { t } = useTranslation();
     const user = usePage().props.auth.user;
     const [isEditing, setIsEditing] = useState({});
+    const [isHoveredText, setIsHoveredText] = useState(false);
 
     useEffect(() => {
         const titles = posts.data.reduce((acc, item) => {
@@ -205,7 +205,50 @@ const PostTable = ({ posts, statuses }) => {
                                                                 <div className="font-bold my-5 text-center">
                                                                     Genel Bakış:
                                                                 </div>
-                                                                <img src={item.image} alt=""/>
+                                                                <Popover>
+                                                                    <PopoverTrigger className="mx-auto flex my-5">
+                                                                        <div
+                                                                            className="relative"
+                                                                            onMouseEnter={() =>
+                                                                                setIsHoveredText(
+                                                                                    true,
+                                                                                )
+                                                                            }
+                                                                            onMouseLeave={() =>
+                                                                                setIsHoveredText(
+                                                                                    false,
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <div className="bg-gradient-to-b from-black/40 to-black/10 text-white/50 py-2 absolute top-0 w-full">
+                                                                                {isHoveredText
+                                                                                    ? "Tıkla 👆"
+                                                                                    : item.image_alt}
+                                                                            </div>
+                                                                            <img
+                                                                                src={
+                                                                                    item.image
+                                                                                }
+                                                                                className="w-72 h-20 object-cover rounded-md shadow-md"
+                                                                                alt=""
+                                                                            />
+                                                                        </div>
+                                                                    </PopoverTrigger>
+                                                                    <PopoverContent>
+                                                                        <img
+                                                                            src={
+                                                                                item.image
+                                                                            }
+                                                                            alt=""
+                                                                        />
+                                                                        <div className="text-center font-medium text-lg mt-2 text-gray-500">
+                                                                            {
+                                                                                item.image_alt
+                                                                            }
+                                                                        </div>
+                                                                    </PopoverContent>
+                                                                </Popover>
+
                                                                 <div className="flex flex-row items-center justify-start shadow-sm">
                                                                     <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                         <span>
