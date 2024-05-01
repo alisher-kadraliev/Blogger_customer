@@ -8,8 +8,10 @@ const Paginate = ({ links }) => {
         <nav className="text-center mt-4">
             {links.map((link, index) => (
                 <Link
+                    preserveScroll
+                    preserveState
                     href={link.url || ""}
-                    key={index} // Consider using index if label might not be unique
+                    key={index}
                     className={`inline-block py-2 px-3 rounded-lg text-gray-900 mx-1 transition-custom ${
                         link.active ? "bg-gray-800 text-white" : " "
                     }${!link.url ? " !text-gray-300 cursor-not-allowed" : " hover:bg-gray-800 hover:text-white"}`}

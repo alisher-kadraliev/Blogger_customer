@@ -34,14 +34,21 @@ class PostController extends Controller
                 'statuses' => $statuses,
                 ]);
     }
-public function updateStatus(Request $request, Post $post){
+public function updatePost(Request $request, Post $post){
         $validatedData = $request->validate([
-            'status' => 'required|string',
+            'status' => 'sometimes|required|string',
+            'title' => 'sometimes|required|string'
         ]);
-        $post->status = $validatedData['status'];
+        if($request->has('title')){
+            $post->title =$validatedData["title"];
+        }
+        if($request->has('status')){
+            $post->status = $validatedData['status'];
+        }
         $post->save();
         return redirect()->back();
 }
+
     /**
      * Show the form for creating a new resource.
      */

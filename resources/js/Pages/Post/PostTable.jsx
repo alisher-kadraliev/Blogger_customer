@@ -1,8 +1,14 @@
-import React from "react";
-import {Link, router, usePage} from "@inertiajs/react";
+import React, { useEffect, useState } from "react";
+import { router, usePage } from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
 
-import { CheckCheck, CircleHelp, EllipsisVertical, Timer } from "lucide-react";
+import {
+    CheckCheck,
+    CircleHelp,
+    EllipsisVertical,
+    Timer,
+    Heading1,
+} from "lucide-react";
 
 import {
     Table,
@@ -28,26 +34,49 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/Components/ui/sheet";
-
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
-import toast, {Toaster} from "react-hot-toast";
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover"
+
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+
+import toast, { Toaster } from "react-hot-toast";
 
 const PostTable = ({ posts, statuses }) => {
     const { t } = useTranslation();
     const user = usePage().props.auth.user;
+    const [isEditing, setIsEditing] = useState({});
+
+    useEffect(() => {
+        const titles = posts.data.reduce((acc, item) => {
+            acc[item.id] = item.title;
+            return acc;
+        }, {});
+        setIsEditing(titles);
+    }, [posts.data]);
+
+    const handleTitleChange = (id, newTitle) => {
+        setIsEditing((prev) => ({ ...prev, [id]: newTitle }));
+    };
+    const handleSaveTitle = (postId, newTitle) => {
+        if (newTitle !== posts.data.find((post) => post.id === postId).title) {
+            router.patch(`/posts/${postId}/update`, { title: newTitle });
+        }
+    };
 
     function handleStatusChange(e, postId) {
         const newStatus = e.target.value;
-        router.patch(`/posts/${postId}/update-status`, {
-            status: newStatus,
-        });
-        toast.success("Güncellendi");
+        router.patch(
+            `/posts/${postId}/update`,
+            { status: newStatus },
+            {
+                onSuccess: () => toast.success("Güncellendi"),
+                onError: () => "Hata oluştu.",
+            },
+        );
     }
 
     return (
@@ -104,18 +133,18 @@ const PostTable = ({ posts, statuses }) => {
                                             <SheetTrigger className="px-2 items-center flex py-1.5 text-sm hover:bg-gray-100 rounded-md w-full">
                                                 Göz At
                                             </SheetTrigger>
-                                            <SheetContent className="sm:max-w-full w-[80%]">
+                                            <SheetContent className="sm:max-w-full w-[80%] overflow-scroll">
                                                 <SheetHeader>
-                                                    <SheetTitle className="bg-gray-50 p-6 rounded-md">
-                                                        <div className="flex flex-row justify-between">
+                                                    <SheetTitle className="bg-gray-100 p-6 rounded-md">
+                                                        <div className="flex flex-row justify-between max-lg:flex-col max-lg:gap-5">
                                                             <div className="flex flex-row gap-3">
                                                                 <div className="flex flex-col">
-                                                                    <h4>
+                                                                    <h4 className=" text-gray-500">
                                                                         {
                                                                             user.name
                                                                         }
                                                                     </h4>
-                                                                    <div className="font-medium text-sm text-gray-600">
+                                                                    <div className="font-medium text-sm text-gray-400">
                                                                         {
                                                                             user.email
                                                                         }
@@ -124,6 +153,7 @@ const PostTable = ({ posts, statuses }) => {
                                                             </div>
                                                             <div>
                                                                 <select
+                                                                    className="mr-10 border-none rounded-md shadow-lg focus:ring-0 focus:border-transparent"
                                                                     onChange={(
                                                                         e,
                                                                     ) =>
@@ -154,17 +184,79 @@ const PostTable = ({ posts, statuses }) => {
                                                                             </option>
                                                                         ),
                                                                     )}
-                                                                    <option value=""></option>
                                                                 </select>
                                                             </div>
                                                         </div>
                                                     </SheetTitle>
                                                     <SheetDescription>
-                                                        This action cannot be
-                                                        undone. This will
-                                                        permanently delete your
-                                                        account and remove your
-                                                        data from our servers.
+                                                        <Tabs
+                                                            defaultValue="post"
+                                                            className="mt-4"
+                                                        >
+                                                            <TabsList>
+                                                                <TabsTrigger value="post">
+                                                                    Account
+                                                                </TabsTrigger>
+                                                                <TabsTrigger value="comments">
+                                                                    Comments
+                                                                </TabsTrigger>
+                                                            </TabsList>
+                                                            <TabsContent value="post">
+                                                                <div className="font-bold my-5 text-center">
+                                                                    Genel Bakış:
+                                                                </div>
+                                                                <img src={item.image} alt=""/>
+                                                                <div className="flex flex-row items-center justify-start shadow-sm">
+                                                                    <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                        <span>
+                                                                            <Heading1
+                                                                                size={
+                                                                                    17
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                        <div className="text-md font-medium">
+                                                                            Başlık
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="border py-2 px-4 text-start rounded-e-lg  w-full">
+                                                                        <input
+                                                                            className="p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
+                                                                            type="text"
+                                                                            value={
+                                                                                isEditing[
+                                                                                    item
+                                                                                        .id
+                                                                                ] ||
+                                                                                ""
+                                                                            }
+                                                                            onChange={(
+                                                                                e,
+                                                                            ) =>
+                                                                                handleTitleChange(
+                                                                                    item.id,
+                                                                                    e
+                                                                                        .target
+                                                                                        .value,
+                                                                                )
+                                                                            }
+                                                                            onBlur={() =>
+                                                                                handleSaveTitle(
+                                                                                    item.id,
+                                                                                    isEditing[
+                                                                                        item
+                                                                                            .id
+                                                                                    ],
+                                                                                )
+                                                                            }
+                                                                        />
+                                                                    </div>
+                                                                </div>
+                                                            </TabsContent>
+                                                            <TabsContent value="comments">
+                                                                Comments
+                                                            </TabsContent>
+                                                        </Tabs>
                                                     </SheetDescription>
                                                 </SheetHeader>
                                             </SheetContent>
@@ -182,7 +274,7 @@ const PostTable = ({ posts, statuses }) => {
                     ))}
                 </TableBody>
             </Table>
-                <Toaster />
+            <Toaster />
         </React.Fragment>
     );
 };
