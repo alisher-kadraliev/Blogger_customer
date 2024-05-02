@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,41 +18,77 @@ class PostController extends Controller
         $query = Post::query()->with('category');
         $posts = $query->paginate(5)->onEachSide(1);
         $statuses = Post::select('status')->distinct()->pluck('status');
-
+        $categories = Category::all();
         return Inertia::render('Post/Index',
             ['posts' => $posts,
                 'statuses' => $statuses,
-                ]);
+                'categories' => $categories,
+            ]);
     }
+
     public function PostTable()
     {
         $query = Post::query()->with('category');
         $posts = $query->paginate(5)->onEachSide(1);
         $statuses = Post::select('status')->distinct()->pluck('status');
+        $categories = Category::all();
 
         return Inertia::render('Post/PostTable',
             ['posts' => $posts,
                 'statuses' => $statuses,
-                ]);
+                'categories' => $categories,
+            ]);
     }
-public function updatePost(Request $request, Post $post){
+
+    public function updatePost(Request $request, Post $post)
+    {
         $validatedData = $request->validate([
             'status' => 'sometimes|required|string',
             'title' => 'sometimes|required|string',
             'slug' => 'sometimes|required|string|unique:posts,slug, ' . $post->id,
+            'meta_title' => 'sometimes|nullable|string',
+            'meta_description' => 'sometimes|nullable|string',
+            'content' => 'sometimes|nullable|string',
+            'likes' => 'sometimes|nullable|integer',
+            'reading_time' => 'sometimes|nullable|integer',
+            'published' => 'sometimes|nullable|boolean',
+            'views' => 'sometimes|nullable|integer',
+            'category_id' => 'sometimes|required|exists:categories,id',
         ]);
-        if($request->has('title')){
-            $post->title =$validatedData["title"];
+        if ($request->has('title')) {
+            $post->title = $validatedData["title"];
         }
-        if($request->has('status')){
+        if ($request->has('status')) {
             $post->status = $validatedData['status'];
         }
-        if($request->has('slug')){
+        if ($request->has('slug')) {
             $post->slug = $validatedData['slug'];
         }
+        if ($request->has('meta_title')) {
+            $post->meta_title = $validatedData['meta_title'];
+        }
+        if ($request->has('meta_description')) {
+            $post->meta_description = $validatedData['meta_description'];
+        }
+        if ($request->has('content')) {
+            $post->content = $validatedData['content'];
+        }
+        if ($request->has('likes')) {
+            $post->likes = $validatedData['likes'];
+        }
+        if ($request->has('reading_time')) {
+            $post->reading_time = $validatedData['reading_time'];
+        }
+        if ($request->has('published')) {
+            $post->published = $validatedData['published'];
+        }
+        if ($request->has('views')) {
+            $post->views = $validatedData['views'];
+        }
+        $post->fill($validatedData);
         $post->save();
         return redirect()->back();
-}
+    }
 
     /**
      * Show the form for creating a new resource.

@@ -5,7 +5,7 @@ import Table from "@/Pages/Post/PostTable.jsx";
 import Paginate from "@/Pages/Post/Paginate.jsx";
 import { useTranslation } from "react-i18next";
 
-const Index = ({ auth, posts, statuses }) => {
+const Index = ({ auth, posts, statuses,categories }) => {
     const { t } = useTranslation();
     return (
         <AuthenticatedLayout
@@ -22,7 +22,7 @@ const Index = ({ auth, posts, statuses }) => {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            <Table posts={posts} statuses={statuses} />
+                            <Table posts={posts} statuses={statuses} categories={categories}/>
                             <Paginate links={posts.links} />
                             <pre> {JSON.stringify(posts, undefined, 2)}</pre>
                         </div>
