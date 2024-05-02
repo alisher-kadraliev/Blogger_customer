@@ -37,13 +37,17 @@ class PostController extends Controller
 public function updatePost(Request $request, Post $post){
         $validatedData = $request->validate([
             'status' => 'sometimes|required|string',
-            'title' => 'sometimes|required|string'
+            'title' => 'sometimes|required|string',
+            'slug' => 'sometimes|required|string|unique:posts,slug, ' . $post->id,
         ]);
         if($request->has('title')){
             $post->title =$validatedData["title"];
         }
         if($request->has('status')){
             $post->status = $validatedData['status'];
+        }
+        if($request->has('slug')){
+            $post->slug = $validatedData['slug'];
         }
         $post->save();
         return redirect()->back();

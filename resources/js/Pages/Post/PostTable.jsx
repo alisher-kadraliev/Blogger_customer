@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
+import slugify from "slugify";
 
 import {
     CheckCheck,
@@ -8,6 +9,7 @@ import {
     EllipsisVertical,
     Timer,
     Heading1,
+    Link,
 } from "lucide-react";
 
 import {
@@ -39,7 +41,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
 import toast, { Toaster } from "react-hot-toast";
@@ -51,21 +52,31 @@ const PostTable = ({ posts, statuses }) => {
     const [isHoveredText, setIsHoveredText] = useState(false);
 
     useEffect(() => {
-        const titles = posts.data.reduce((acc, item) => {
-            acc[item.id] = item.title;
+        const initialEditState  = posts.data.reduce((acc, post) => {
+            acc[post.id] = {title:post.title,slug:post.slug};
             return acc;
         }, {});
-        setIsEditing(titles);
+        setIsEditing(initialEditState);
     }, [posts.data]);
 
     const handleTitleChange = (id, newTitle) => {
-        setIsEditing((prev) => ({ ...prev, [id]: newTitle }));
+        const newSlug = slugify(newTitle,{lower:true,strict:true,remove:/[*+~.()'"!:@]/g});
+        setIsEditing((prev) => ({ ...prev, [id]: {...prev[id],title:newTitle,slug:newSlug} }));
     };
-    const handleSaveTitle = (postId, newTitle) => {
-        if (newTitle !== posts.data.find((post) => post.id === postId).title) {
-            router.patch(`/posts/${postId}/update`, { title: newTitle });
+    const handleSaveTitle = (postId, title) => {
+        if (title !== posts.data.find((post) => post.id === postId).title) {
+            router.patch(`/posts/${postId}/update`, {
+                title,
+                slug: isEditing[postId].slug,
+            });
         }
     };
+    const createSlug = (title) =>
+        slugify(title, {
+            lower: true,
+            strict: true,
+            remove: /[*+~.()'"!:@]/g,
+        });
 
     function handleStatusChange(e, postId) {
         const newStatus = e.target.value;
@@ -249,7 +260,7 @@ const PostTable = ({ posts, statuses }) => {
                                                                     </PopoverContent>
                                                                 </Popover>
 
-                                                                <div className="flex flex-row items-center justify-start shadow-sm">
+                                                                <div className="flex flex-row items-center justify-start my-2 shadow-sm">
                                                                     <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                         <span>
                                                                             <Heading1
@@ -266,12 +277,7 @@ const PostTable = ({ posts, statuses }) => {
                                                                         <input
                                                                             className="p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
                                                                             type="text"
-                                                                            value={
-                                                                                isEditing[
-                                                                                    item
-                                                                                        .id
-                                                                                ] ||
-                                                                                ""
+                                                                            value={isEditing[item.id] ? isEditing[item.id].title : ""
                                                                             }
                                                                             onChange={(
                                                                                 e,
@@ -289,10 +295,27 @@ const PostTable = ({ posts, statuses }) => {
                                                                                     isEditing[
                                                                                         item
                                                                                             .id
-                                                                                    ],
+                                                                                    ].title,
                                                                                 )
                                                                             }
                                                                         />
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex flex-row items-center justify-start my-2 shadow-sm">
+                                                                    <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                        <span>
+                                                                            <Link
+                                                                                size={
+                                                                                    17
+                                                                                }
+                                                                            />
+                                                                        </span>
+                                                                        <div className="text-md font-medium">
+                                                                            URL
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="border py-2 px-4 text-start rounded-e-lg  w-full text-lg">
+                                                                        {isEditing[item.id] ? isEditing[item.id].slug : ""}
                                                                     </div>
                                                                 </div>
                                                             </TabsContent>
