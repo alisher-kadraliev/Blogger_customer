@@ -21,6 +21,8 @@ Route::get('/dashboard', function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('post', PostController::class);
     Route::patch('posts/{post}/update',[PostController::class,'updatePost']);
+    Route::post('/posts/{post}/restore', [PostController::class, 'restore'])->name('posts.restore');
+
 });
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
