@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\FrontController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -24,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/posts/{post}/restore', [PostController::class, 'restore'])->name('posts.restore');
 
 });
+Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -208,7 +208,7 @@ const PostTable = ({ posts, statuses, categories }) => {
                 toast((t) => (
                     <div>
                         <button onClick={() => undoDelete(postId, t.id)}>
-                            geri
+                            Geri Al 🔄
                         </button>
                     </div>
                 )),
