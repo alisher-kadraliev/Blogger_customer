@@ -3,6 +3,7 @@ import { router, usePage } from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
 import slugify from "slugify";
 import { Link } from "@inertiajs/react";
+import Paginate from "@/Pages/Post/Paginate.jsx";
 
 import {
     ArrowBigUpDash,
@@ -54,12 +55,30 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
 import toast, { Toaster } from "react-hot-toast";
+import TrashedPosts from "@/Pages/Post/TrashedPosts/TrashedPosts.jsx";
+import TextInput from "@/Components/TextInput.jsx";
 
-const PostTable = ({ posts, statuses, categories }) => {
+const PostTable = ({
+    posts,
+    statuses,
+    categories,
+    trashedPosts,
+    totalPost,
+}) => {
     const { t } = useTranslation();
     const user = usePage().props.auth.user;
     const [isEditing, setIsEditing] = useState({});
     const [isHoveredText, setIsHoveredText] = useState(false);
+    const [search, setSearch] = useState("");
+    const handleSearch = (e) => {
+        const value = e.target.value;
+        setSearch(value);
+        router.get(
+            "post",
+            { search: value },
+            { preserveScroll: true, preserveState: true },
+        );
+    };
 
     useEffect(() => {
         const initialEditState = posts.data.reduce((acc, post) => {
@@ -208,7 +227,10 @@ const PostTable = ({ posts, statuses, categories }) => {
                 toast((t) => (
                     <div>
                         <button onClick={() => undoDelete(postId, t.id)}>
-                            Geri Al 🔄
+                            Çöpe gitti ya da{" "}
+                            <span className="text-blue-600 underline">
+                                Geri Al 🔄
+                            </span>
                         </button>
                     </div>
                 )),
@@ -252,11 +274,20 @@ const PostTable = ({ posts, statuses, categories }) => {
             <Tabs defaultValue="valid" className="w-full">
                 <TabsList>
                     <TabsTrigger value="valid">
-                        Hepsi Postlar({posts.data.length})
+                        Hepsi Postlar({totalPost})
                     </TabsTrigger>
-                    <TabsTrigger value="trashed">Password</TabsTrigger>
+                    <TabsTrigger value="trashed">
+                        Çop ({trashedPosts.length})
+                    </TabsTrigger>
                 </TabsList>
                 <TabsContent value="valid">
+                    <TextInput
+                        autoComplete="off"
+                        placeholder="Post Ismine Ara"
+                        className="my-5"
+                        value={search}
+                        onChange={handleSearch}
+                    />
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -648,6 +679,8 @@ const PostTable = ({ posts, statuses, categories }) => {
                                                                                         )
                                                                                     }
                                                                                 />
+                                                                                Yayına
+                                                                                al
                                                                             </label>
                                                                             <div className="flex flex-row items-center justify-start my-3 shadow-sm">
                                                                                 <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
@@ -789,7 +822,7 @@ const PostTable = ({ posts, statuses, categories }) => {
                                                                                             }
                                                                                         />
                                                                                     </span>
-                                                                                    <div className="text-md font-medium w-24">
+                                                                                    <div className="text-md font-medium w-28">
                                                                                         Meta
                                                                                         Açıklama
                                                                                     </div>
@@ -955,7 +988,6 @@ const PostTable = ({ posts, statuses, categories }) => {
                                                         className="cursor-pointer flex text-white flex-row gap-2 my-1 items-center bg-red-500 hover:!bg-red-400 hover:!text-white"
                                                     >
                                                         <span>
-                                                            {" "}
                                                             <Trash2
                                                                 size={15}
                                                                 color="white"
@@ -971,14 +1003,25 @@ const PostTable = ({ posts, statuses, categories }) => {
                             </TableBody>
                         ) : (
                             <div className="flex justify-center gap-7 mx-auto items-center flex-col py-10">
-                                <span className="!text-[50px] animate-spin">❓</span>
-                                <span className="text-52">Post Yazılmadı Hemen Bir Tane <Link href="" className="text-blue-500 underline font-bold">Yaz</Link> </span>
+                                <span className="!text-[50px] animate-spin">
+                                    ❓
+                                </span>
+                                <span className="text-52">
+                                    Post Yazılmadı Hemen Bir Tane{" "}
+                                    <Link
+                                        href=""
+                                        className="text-blue-500 underline font-bold"
+                                    >
+                                        Yaz
+                                    </Link>
+                                </span>
                             </div>
                         )}
                     </Table>
+                    <Paginate links={posts.links} />
                 </TabsContent>
                 <TabsContent value="trashed">
-                    Change your password here.
+                    <TrashedPosts trashedPosts={trashedPosts} />
                 </TabsContent>
             </Tabs>
             <Toaster />

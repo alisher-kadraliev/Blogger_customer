@@ -75,11 +75,11 @@
         @apply bg-background text-foreground;
         font-family: "Inter-Regular", sans-serif!important;
     }
-    h1{
+    .h1{
         font-family: 'Quincy-Italic', sans-serif!important;
 
     }
-    h2{
+    .h2{
         font-family: 'Quincy-Regular', sans-serif!important;
     }
     label {

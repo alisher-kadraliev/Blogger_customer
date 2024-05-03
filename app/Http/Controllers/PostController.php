@@ -16,27 +16,44 @@ class PostController extends Controller
     public function index()
     {
         $query = Post::query()->with('category');
+        $searchPost = request()->input('search');
+        if ($searchPost) {
+            $query->where('title', 'like', '%' . $searchPost . '%');
+        }
         $posts = $query->paginate(5)->onEachSide(1);
         $statuses = Post::select('status')->distinct()->pluck('status');
         $categories = Category::all();
+        $totalPosts = Post::count();
+        $trashedPosts = Post::onlyTrashed()->with('category')->get();
+
         return Inertia::render('Post/Index',
             ['posts' => $posts,
                 'statuses' => $statuses,
                 'categories' => $categories,
+                'trashedPosts' => $trashedPosts,
+                'totalPost' => $totalPosts
             ]);
     }
 
     public function PostTable()
     {
+
         $query = Post::query()->with('category');
+        $searchPost = request()->input('search');
+        if ($searchPost) {
+            $query->where('title', 'like', '%' . 'searchPost' . '%');
+        }
         $posts = $query->paginate(5)->onEachSide(1);
         $statuses = Post::select('status')->distinct()->pluck('status');
         $categories = Category::all();
-
+        $totalPosts = Post::count();
+        $trashedPosts = Post::onlyTrashed()->with('category')->get();
         return Inertia::render('Post/PostTable',
             ['posts' => $posts,
                 'statuses' => $statuses,
                 'categories' => $categories,
+                'trashedPosts' => $trashedPosts,
+                'totalPost' => $totalPosts
             ]);
     }
 
@@ -145,6 +162,19 @@ class PostController extends Controller
     {
         $post = Post::withTrashed()->findOrFail($id);
         $post->restore();
+        return redirect()->back();
+    }
+
+    public function trashedPosts()
+    {
+        $trashedPosts = Post::onlyTrashed()->with('category')->get();
+        return Inertia::render('Post/TrashedPosts', ['trashedPosts' => $trashedPosts]);
+    }
+
+    public function deletePermanently($id)
+    {
+        $post = Post::onlyTrashed()->findOrFail($id);
+        $post->forceDelete();
         return redirect()->back();
     }
 }

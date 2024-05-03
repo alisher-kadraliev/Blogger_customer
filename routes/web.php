@@ -23,6 +23,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('post', PostController::class);
     Route::patch('posts/{post}/update',[PostController::class,'updatePost']);
     Route::post('/posts/{post}/restore', [PostController::class, 'restore'])->name('posts.restore');
+    Route::get('/posts/trashed', [PostController::class,'trashedPosts'])->name('posts.trashed');
+    Route::delete('/posts/{post}/delete-permanently', [PostController::class, 'deletePermanently'])->name('posts.delete-permanently');
+
 
 });
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
