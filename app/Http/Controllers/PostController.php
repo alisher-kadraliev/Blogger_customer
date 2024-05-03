@@ -7,6 +7,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use SebastianBergmann\CodeCoverage\Report\Xml\Project;
+use function Termwind\render;
 
 class PostController extends Controller
 {
@@ -112,7 +113,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Post/Create');
     }
 
     /**

@@ -4,6 +4,13 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import { Link } from "@inertiajs/react";
+import {
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+} from "@/Components/ui/navigation-menu";
 
 export default function Authenticated({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -28,12 +35,69 @@ export default function Authenticated({ user, header, children }) {
                                 >
                                     Dashboard
                                 </NavLink>
-                                <NavLink
-                                    href={route("post.index")}
-                                    active={route().current("post.index")}
-                                >
-                                    Postlar
-                                </NavLink>
+
+                                <NavigationMenu>
+                                    <NavigationMenuList>
+                                        <NavigationMenuItem>
+                                            <NavigationMenuTrigger>
+                                                Postlar
+                                            </NavigationMenuTrigger>
+                                            <NavigationMenuContent>
+                                                <div className="flex flex-col gap-3 p-4 w-auto text-ellipsis text-nowrap">
+                                                    <NavLink
+                                                        href={route(
+                                                            "post.create",
+                                                        )}
+                                                        active={route().current(
+                                                            "post.create",
+                                                        )}
+                                                    >
+                                                        Yeni Post
+                                                    </NavLink>
+                                                    <NavLink
+                                                        href={route(
+                                                            "post.index",
+                                                        )}
+                                                        active={route().current(
+                                                            "post.index",
+                                                        )}
+                                                    >
+                                                        Hep Postlar
+                                                    </NavLink>
+                                                </div>
+                                            </NavigationMenuContent>
+                                        </NavigationMenuItem>
+                                        <NavigationMenuItem>
+                                            <NavigationMenuTrigger>
+                                                Kategoriler
+                                            </NavigationMenuTrigger>
+                                            <NavigationMenuContent>
+                                                <div className="flex flex-col gap-3 p-4 w-auto text-ellipsis text-nowrap">
+                                                <NavLink
+                                                    href={route(
+                                                        "category.create",
+                                                    )}
+                                                    active={route().current(
+                                                        "category.create",
+                                                    )}
+                                                >
+                                                    Yeni Kategori
+                                                </NavLink>
+                                                    <NavLink
+                                                    href={route(
+                                                        "category.index",
+                                                    )}
+                                                    active={route().current(
+                                                        "category.index",
+                                                    )}
+                                                >
+                                                    Hep Kategoriler
+                                                </NavLink>
+                                                </div>
+                                            </NavigationMenuContent>
+                                        </NavigationMenuItem>
+                                    </NavigationMenuList>
+                                </NavigationMenu>
                             </div>
                         </div>
 
@@ -138,6 +202,68 @@ export default function Authenticated({ user, header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
+                        <NavigationMenu>
+                            <NavigationMenuList className="flex-col gap-2">
+                                <NavigationMenuItem>
+                                    <NavigationMenuTrigger>
+                                        Postlar
+                                    </NavigationMenuTrigger>
+                                    <NavigationMenuContent>
+                                        <div className="flex flex-col gap-3 p-4 w-auto text-ellipsis text-nowrap">
+                                            <NavLink
+                                                href={route(
+                                                    "post.create",
+                                                )}
+                                                active={route().current(
+                                                    "post.create",
+                                                )}
+                                            >
+                                                Yeni Post
+                                            </NavLink>
+                                            <NavLink
+                                                href={route(
+                                                    "post.index",
+                                                )}
+                                                active={route().current(
+                                                    "post.index",
+                                                )}
+                                            >
+                                                Hep Postlar
+                                            </NavLink>
+                                        </div>
+                                    </NavigationMenuContent>
+                                </NavigationMenuItem>
+                                <NavigationMenuItem>
+                                    <NavigationMenuTrigger>
+                                        Kategoriler
+                                    </NavigationMenuTrigger>
+                                    <NavigationMenuContent>
+                                        <div className="flex flex-col gap-3 p-4 w-auto text-ellipsis text-nowrap">
+                                            <NavLink
+                                                href={route(
+                                                    "category.create",
+                                                )}
+                                                active={route().current(
+                                                    "category.create",
+                                                )}
+                                            >
+                                                Yeni Kategori
+                                            </NavLink>
+                                            <NavLink
+                                                href={route(
+                                                    "category.index",
+                                                )}
+                                                active={route().current(
+                                                    "category.index",
+                                                )}
+                                            >
+                                                Hep Kategoriler
+                                            </NavLink>
+                                        </div>
+                                    </NavigationMenuContent>
+                                </NavigationMenuItem>
+                            </NavigationMenuList>
+                        </NavigationMenu>
                     </div>
 
                     <div className="pt-4 pb-1 border-t border-gray-200">

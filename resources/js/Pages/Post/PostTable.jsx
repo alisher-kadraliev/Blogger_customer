@@ -57,6 +57,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import toast, { Toaster } from "react-hot-toast";
 import TrashedPosts from "@/Pages/Post/TrashedPosts/TrashedPosts.jsx";
 import TextInput from "@/Components/TextInput.jsx";
+import PrimaryButton from "@/Components/PrimaryButton.jsx";
 
 const PostTable = ({
     posts,
@@ -281,6 +282,7 @@ const PostTable = ({
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="valid">
+                    <div className="flex flex-row justify-between items-center max-lg:flex-col gap-3">
                     <TextInput
                         autoComplete="off"
                         placeholder="Post Ismine Ara"
@@ -288,6 +290,8 @@ const PostTable = ({
                         value={search}
                         onChange={handleSearch}
                     />
+                    <Link href={route('post.create')} className="btn bg-primary text-white p-2 rounded-lg font-medium text-sm hover:scale-95 transition-all duration-300 ease-in-out">Yeni Post Ekle</Link>
+                    </div>
                     <Table>
                         <TableHeader>
                             <TableRow>
