@@ -1,9 +1,23 @@
-// import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import {Head} from "@inertiajs/react";
+import {Head, useForm} from "@inertiajs/react";
 import React from "react";
+import toast from "react-hot-toast";
 
 export default function Table({auth}) {
+    const {data,setData,post,errors} = useForm({
+        title: '',
+        slug: '',
+        content:'',
+        author_id: auth.user.id
+    })
+
+    const handleSubmitForm = (e) => {
+        e.preventDefault();
+        post('/post',{
+            onSuccess: () => toast.success('Post başarıyla eklendi')
+        })
+    }
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -18,7 +32,7 @@ export default function Table({auth}) {
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
-                            <form>
+                            <form onSubmit={handleSubmitForm}>
                                 <div className="space-y-12">
                                     <div className="border-b border-gray-900/10 pb-12">
                                         <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -29,14 +43,58 @@ export default function Table({auth}) {
                                                 </label>
                                                 <div className="mt-2">
                                                     <div
-                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
-                                                            name="username"
                                                             id="username"
-                                                            autoComplete="username"
+                                                            value={data.title}
+                                                            onChange={(e) => setData('title',e.target.value)}
                                                             className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                                            placeholder="Hadi Güzel bir Post yazalım"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="sm:col-span-4">
+                                                <label htmlFor="username"
+                                                       className="block text-sm font-medium leading-6 text-gray-900">
+                                                    Başlık Ekle
+                                                </label>
+                                                <div className="mt-2">
+                                                    <div
+                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                        <input
+                                                            type="text"
+                                                            id="username"
+                                                            value={data.slug}
+                                                            onChange={(e) => setData('slug',e.target.value)}
+                                                            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="sm:col-span-4">
+                                                <label htmlFor="username"
+                                                       className="block text-sm font-medium leading-6 text-gray-900">
+                                                    Başlık Ekle
+                                                </label>
+                                                <div className="mt-2">
+
+                                                </div>
+                                            </div>
+                                            <div className="sm:col-span-4 hidden">
+                                                <label htmlFor="username"
+                                                       className="block text-sm font-medium leading-6 text-gray-900">
+                                                    Başlık Ekle
+                                                </label>
+                                                <div className="mt-2">
+                                                    <div
+                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                        <input
+                                                            type="text"
+                                                            id="username"
+                                                            value={data.author_id}
+                                                            onChange={(e) => setData('author_id',e.target.value)}
+                                                            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                                                         />
                                                     </div>
                                                 </div>

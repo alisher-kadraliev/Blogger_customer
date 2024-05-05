@@ -121,7 +121,14 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Post::create($request->validate([
+            'title' => ['required', 'unique:posts'],
+            'slug' => ['required', 'unique:posts'],
+            'content' => ['nullable'],
+            'author_id' => 'required|integer|exists:users,id'
+        ]));
+
+        return redirect()->route('post.index');
     }
 
     /**

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { router, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
 import slugify from "slugify";
-import { Link } from "@inertiajs/react";
 import Paginate from "@/Pages/Post/Paginate.jsx";
 
 import {
@@ -11,15 +10,16 @@ import {
     CircleHelp,
     Clock2,
     EllipsisVertical,
+    Eye,
     GalleryVerticalEnd,
     Heading1,
     Heart,
     Link2,
     SendHorizontal,
-    Timer,
-    Eye,
     StickyNote,
+    Timer,
     Trash2,
+    X,
 } from "lucide-react";
 
 import {
@@ -57,7 +57,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import toast, { Toaster } from "react-hot-toast";
 import TrashedPosts from "@/Pages/Post/TrashedPosts/TrashedPosts.jsx";
 import TextInput from "@/Components/TextInput.jsx";
-import PrimaryButton from "@/Components/PrimaryButton.jsx";
+import SecondaryButton from "@/Components/SecondaryButton.jsx";
 
 const PostTable = ({
     posts,
@@ -241,6 +241,14 @@ const PostTable = ({
     const undoDelete = (postId) => {
         router.post(`/posts/${postId}/restore`);
     };
+    const handleReset = () => {
+        setSearch("");
+        router.get(
+            "post",
+            { search: "" },
+            { preserveScroll: true, preserveState: true },
+        );
+    };
 
     function handleStatusChange(e, postId) {
         const newStatus = e.target.value;
@@ -283,28 +291,44 @@ const PostTable = ({
                 </TabsList>
                 <TabsContent value="valid">
                     <div className="flex flex-row justify-between items-center max-lg:flex-col gap-3">
-                    <TextInput
-                        autoComplete="off"
-                        placeholder="Post Ismine Ara"
-                        className="my-5"
-                        value={search}
-                        onChange={handleSearch}
-                    />
-                    <Link href={route('post.create')} className="btn bg-primary text-white p-2 rounded-lg font-medium text-sm hover:scale-95 transition-all duration-300 ease-in-out">Yeni Post Ekle</Link>
+                        <div className="flex flex-row gap-2 max-lg:flex-col justify-center my-5">
+                            <TextInput
+                                autoComplete="off"
+                                placeholder="Post ismine göre ara"
+                                value={search}
+                                onChange={handleSearch}
+                            />
+                            {search && (
+                                <SecondaryButton
+                                    className="mx-2"
+                                    onClick={handleReset}
+                                >
+                                    <X size={19} className="mr-2" />{" "}
+                                    <span>sıfırla</span>
+                                </SecondaryButton>
+                            )}
+                        </div>
+                        <Link
+                            href={route("post.create")}
+                            className="btn bg-primary text-white p-2 rounded-lg font-medium text-sm hover:scale-95 transition-all duration-300 ease-in-out"
+                        >
+                            Yeni Post Ekle
+                        </Link>
                     </div>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Başlık</TableHead>
-                                <TableHead>Categori</TableHead>
-                                <TableHead>Tarih</TableHead>
-                                <TableHead>Durum</TableHead>
-                                <TableHead className="text-right">
-                                    Etki
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        {posts.data.length > 0 ? (
+                    {posts.data.length > 0 ? (
+                        <Table>
+                            <TableHeader>
+                                <TableRow>
+                                    <TableHead>Başlık</TableHead>
+                                    <TableHead>Categori</TableHead>
+                                    <TableHead>Tarih</TableHead>
+                                    <TableHead>Durum</TableHead>
+                                    <TableHead className="text-right">
+                                        Etki
+                                    </TableHead>
+                                </TableRow>
+                            </TableHeader>
+
                             <TableBody>
                                 {posts.status}
                                 {posts.data.map((item, id) => (
@@ -425,12 +449,14 @@ const PostTable = ({
                                                                             </TabsTrigger>
                                                                         </TabsList>
                                                                         <TabsContent value="post">
-                                                                            <div className="font-bold my-10 text-center">
+                                                                            <div
+                                                                                className="font-bold my-10 text-center">
                                                                                 Genel
                                                                                 Bakış:
                                                                             </div>
                                                                             <Popover>
-                                                                                <div className="flex flex-row justify-start items-start my-5 gap-5 max-lg:flex-col">
+                                                                                <div
+                                                                                    className="flex flex-row justify-start items-start my-5 gap-5 max-lg:flex-col">
                                                                                     <PopoverTrigger>
                                                                                         <div
                                                                                             className="relative"
@@ -445,7 +471,8 @@ const PostTable = ({
                                                                                                 )
                                                                                             }
                                                                                         >
-                                                                                            <div className="bg-gradient-to-b from-black/40 to-black/10 text-white/50 py-2 absolute top-0 w-full">
+                                                                                            <div
+                                                                                                className="bg-gradient-to-b from-black/40 to-black/10 text-white/50 py-2 absolute top-0 w-full">
                                                                                                 {isHoveredText
                                                                                                     ? "Tıkla 👆"
                                                                                                     : item.image_alt}
@@ -459,18 +486,22 @@ const PostTable = ({
                                                                                             />
                                                                                         </div>
                                                                                     </PopoverTrigger>
-                                                                                    <div className="flex flex-col gap-2 justify-center items-center">
+                                                                                    <div
+                                                                                        className="flex flex-col gap-2 justify-center items-center">
                                                                                         {item.likes ===
                                                                                         0 ? (
-                                                                                            <div className="text-[30px]">
+                                                                                            <div
+                                                                                                className="text-[30px]">
                                                                                                 😐
                                                                                             </div>
                                                                                         ) : (
-                                                                                            <div className="text-[30px]">
+                                                                                            <div
+                                                                                                className="text-[30px]">
                                                                                                 😎
                                                                                             </div>
                                                                                         )}
-                                                                                        <div className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
+                                                                                        <div
+                                                                                            className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
                                                                                             <Heart
                                                                                                 size={
                                                                                                     30
@@ -482,12 +513,12 @@ const PostTable = ({
                                                                                                     isEditing[
                                                                                                         item
                                                                                                             .id
-                                                                                                    ]
+                                                                                                        ]
                                                                                                         ? isEditing[
-                                                                                                              item
-                                                                                                                  .id
-                                                                                                          ]
-                                                                                                              .likes
+                                                                                                            item
+                                                                                                                .id
+                                                                                                            ]
+                                                                                                            .likes
                                                                                                         : ""
                                                                                                 }
                                                                                                 onChange={(
@@ -506,7 +537,7 @@ const PostTable = ({
                                                                                                         isEditing[
                                                                                                             item
                                                                                                                 .id
-                                                                                                        ]
+                                                                                                            ]
                                                                                                             .likes,
                                                                                                     )
                                                                                                 }
@@ -515,18 +546,22 @@ const PostTable = ({
                                                                                             />
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div className="flex flex-col gap-2 justify-center items-center">
+                                                                                    <div
+                                                                                        className="flex flex-col gap-2 justify-center items-center">
                                                                                         {item.reading_time ===
                                                                                         0 ? (
-                                                                                            <div className="text-[30px]">
+                                                                                            <div
+                                                                                                className="text-[30px]">
                                                                                                 😐
                                                                                             </div>
                                                                                         ) : (
-                                                                                            <div className="text-[30px]">
+                                                                                            <div
+                                                                                                className="text-[30px]">
                                                                                                 🤓
                                                                                             </div>
                                                                                         )}
-                                                                                        <div className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
+                                                                                        <div
+                                                                                            className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
                                                                                             <Clock2
                                                                                                 size={
                                                                                                     30
@@ -538,12 +573,12 @@ const PostTable = ({
                                                                                                     isEditing[
                                                                                                         item
                                                                                                             .id
-                                                                                                    ]
+                                                                                                        ]
                                                                                                         ? isEditing[
-                                                                                                              item
-                                                                                                                  .id
-                                                                                                          ]
-                                                                                                              .reading_time
+                                                                                                            item
+                                                                                                                .id
+                                                                                                            ]
+                                                                                                            .reading_time
                                                                                                         : ""
                                                                                                 }
                                                                                                 onChange={(
@@ -562,7 +597,7 @@ const PostTable = ({
                                                                                                         isEditing[
                                                                                                             item
                                                                                                                 .id
-                                                                                                        ]
+                                                                                                            ]
                                                                                                             .reading_time,
                                                                                                     )
                                                                                                 }
@@ -571,18 +606,22 @@ const PostTable = ({
                                                                                             />
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div className="flex flex-col gap-2 justify-center items-center">
+                                                                                    <div
+                                                                                        className="flex flex-col gap-2 justify-center items-center">
                                                                                         {item.reading_time ===
                                                                                         0 ? (
-                                                                                            <div className="text-[30px]">
+                                                                                            <div
+                                                                                                className="text-[30px]">
                                                                                                 😐
                                                                                             </div>
                                                                                         ) : (
-                                                                                            <div className="text-[30px]">
+                                                                                            <div
+                                                                                                className="text-[30px]">
                                                                                                 👀
                                                                                             </div>
                                                                                         )}
-                                                                                        <div className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
+                                                                                        <div
+                                                                                            className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
                                                                                             <Eye
                                                                                                 size={
                                                                                                     30
@@ -594,12 +633,12 @@ const PostTable = ({
                                                                                                     isEditing[
                                                                                                         item
                                                                                                             .id
-                                                                                                    ]
+                                                                                                        ]
                                                                                                         ? isEditing[
-                                                                                                              item
-                                                                                                                  .id
-                                                                                                          ]
-                                                                                                              .views
+                                                                                                            item
+                                                                                                                .id
+                                                                                                            ]
+                                                                                                            .views
                                                                                                         : ""
                                                                                                 }
                                                                                                 onChange={(
@@ -618,7 +657,7 @@ const PostTable = ({
                                                                                                         isEditing[
                                                                                                             item
                                                                                                                 .id
-                                                                                                        ]
+                                                                                                            ]
                                                                                                             .views,
                                                                                                     )
                                                                                                 }
@@ -627,23 +666,30 @@ const PostTable = ({
                                                                                             />
                                                                                         </div>
                                                                                     </div>
-                                                                                    <div className="flex flex-col gap-2 justify-start items-start">
-                                                                                        <div className="flex flex-row max-lg:flex-col gap-2 justify-center items-center">
-                                                                                            <div className="text-[30px]">
-                                                                                                <StickyNote />
+                                                                                    <div
+                                                                                        className="flex flex-col gap-2 justify-start items-start">
+                                                                                        <div
+                                                                                            className="flex flex-row max-lg:flex-col gap-2 justify-center items-center">
+                                                                                            <div
+                                                                                                className="text-[30px]">
+                                                                                                <StickyNote/>
                                                                                             </div>
-                                                                                            <div className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
+                                                                                            <div
+                                                                                                className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
                                                                                                 {
                                                                                                     item.created_at_for_humans
                                                                                                 }{" "}
                                                                                                 kurdunuz
                                                                                             </div>
                                                                                         </div>
-                                                                                        <div className="flex flex-row max-lg:flex-col gap-2 justify-center items-center">
-                                                                                            <div className="text-[30px]">
-                                                                                                <StickyNote />
+                                                                                        <div
+                                                                                            className="flex flex-row max-lg:flex-col gap-2 justify-center items-center">
+                                                                                            <div
+                                                                                                className="text-[30px]">
+                                                                                                <StickyNote/>
                                                                                             </div>
-                                                                                            <div className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
+                                                                                            <div
+                                                                                                className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
                                                                                                 {
                                                                                                     item.update_status
                                                                                                 }{" "}
@@ -659,7 +705,8 @@ const PostTable = ({
                                                                                         }
                                                                                         alt=""
                                                                                     />
-                                                                                    <div className="text-center font-medium text-lg mt-2 text-gray-500">
+                                                                                    <div
+                                                                                        className="text-center font-medium text-lg mt-2 text-gray-500">
                                                                                         {
                                                                                             item.image_alt
                                                                                         }
@@ -686,8 +733,10 @@ const PostTable = ({
                                                                                 Yayına
                                                                                 al
                                                                             </label>
-                                                                            <div className="flex flex-row items-center justify-start my-3 shadow-sm">
-                                                                                <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                            <div
+                                                                                className="flex flex-row items-center justify-start my-3 shadow-sm">
+                                                                                <div
+                                                                                    className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                                     <span>
                                                                                         <Heading1
                                                                                             size={
@@ -695,11 +744,13 @@ const PostTable = ({
                                                                                             }
                                                                                         />
                                                                                     </span>
-                                                                                    <div className="text-md font-medium">
+                                                                                    <div
+                                                                                        className="text-md font-medium">
                                                                                         Başlık
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="border py-2 px-4 text-start rounded-e-lg  w-full">
+                                                                                <div
+                                                                                    className="border py-2 px-4 text-start rounded-e-lg  w-full">
                                                                                     <input
                                                                                         className="p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
                                                                                         type="text"
@@ -707,12 +758,12 @@ const PostTable = ({
                                                                                             isEditing[
                                                                                                 item
                                                                                                     .id
-                                                                                            ]
+                                                                                                ]
                                                                                                 ? isEditing[
-                                                                                                      item
-                                                                                                          .id
-                                                                                                  ]
-                                                                                                      .title
+                                                                                                    item
+                                                                                                        .id
+                                                                                                    ]
+                                                                                                    .title
                                                                                                 : ""
                                                                                         }
                                                                                         onChange={(
@@ -731,15 +782,17 @@ const PostTable = ({
                                                                                                 isEditing[
                                                                                                     item
                                                                                                         .id
-                                                                                                ]
+                                                                                                    ]
                                                                                                     .title,
                                                                                             )
                                                                                         }
                                                                                     />
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex flex-row items-center justify-start my-3 shadow-sm">
-                                                                                <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                            <div
+                                                                                className="flex flex-row items-center justify-start my-3 shadow-sm">
+                                                                                <div
+                                                                                    className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                                     <span>
                                                                                         <Link
                                                                                             size={
@@ -747,25 +800,29 @@ const PostTable = ({
                                                                                             }
                                                                                         />
                                                                                     </span>
-                                                                                    <div className="text-md font-medium">
+                                                                                    <div
+                                                                                        className="text-md font-medium">
                                                                                         URL
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="border py-2 px-4 text-start rounded-e-lg  w-full text-lg">
+                                                                                <div
+                                                                                    className="border py-2 px-4 text-start rounded-e-lg  w-full text-lg">
                                                                                     {isEditing[
                                                                                         item
                                                                                             .id
-                                                                                    ]
+                                                                                        ]
                                                                                         ? isEditing[
-                                                                                              item
-                                                                                                  .id
-                                                                                          ]
-                                                                                              .slug
+                                                                                            item
+                                                                                                .id
+                                                                                            ]
+                                                                                            .slug
                                                                                         : ""}
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex flex-row items-center justify-start my-3 shadow-sm">
-                                                                                <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                            <div
+                                                                                className="flex flex-row items-center justify-start my-3 shadow-sm">
+                                                                                <div
+                                                                                    className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                                     <span>
                                                                                         <Link2
                                                                                             size={
@@ -773,12 +830,14 @@ const PostTable = ({
                                                                                             }
                                                                                         />
                                                                                     </span>
-                                                                                    <div className="text-md font-medium w-20">
+                                                                                    <div
+                                                                                        className="text-md font-medium w-20">
                                                                                         Meta
                                                                                         Başlık
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="border py-2 px-4 text-start rounded-e-lg  w-full">
+                                                                                <div
+                                                                                    className="border py-2 px-4 text-start rounded-e-lg  w-full">
                                                                                     <input
                                                                                         className="p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
                                                                                         type="text"
@@ -786,12 +845,12 @@ const PostTable = ({
                                                                                             isEditing[
                                                                                                 item
                                                                                                     .id
-                                                                                            ]
+                                                                                                ]
                                                                                                 ? isEditing[
-                                                                                                      item
-                                                                                                          .id
-                                                                                                  ]
-                                                                                                      .meta_title
+                                                                                                    item
+                                                                                                        .id
+                                                                                                    ]
+                                                                                                    .meta_title
                                                                                                 : ""
                                                                                         }
                                                                                         onChange={(
@@ -810,15 +869,17 @@ const PostTable = ({
                                                                                                 isEditing[
                                                                                                     item
                                                                                                         .id
-                                                                                                ]
+                                                                                                    ]
                                                                                                     .meta_title,
                                                                                             )
                                                                                         }
                                                                                     />
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex flex-row items-center justify-start my-3 shadow-sm">
-                                                                                <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                            <div
+                                                                                className="flex flex-row items-center justify-start my-3 shadow-sm">
+                                                                                <div
+                                                                                    className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                                     <span>
                                                                                         <ArrowBigUpDash
                                                                                             size={
@@ -826,12 +887,14 @@ const PostTable = ({
                                                                                             }
                                                                                         />
                                                                                     </span>
-                                                                                    <div className="text-md font-medium w-28">
+                                                                                    <div
+                                                                                        className="text-md font-medium w-28">
                                                                                         Meta
                                                                                         Açıklama
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="border py-2 px-4 text-start rounded-e-lg  w-full">
+                                                                                <div
+                                                                                    className="border py-2 px-4 text-start rounded-e-lg  w-full">
                                                                                     <input
                                                                                         className="p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
                                                                                         type="text"
@@ -839,12 +902,12 @@ const PostTable = ({
                                                                                             isEditing[
                                                                                                 item
                                                                                                     .id
-                                                                                            ]
+                                                                                                ]
                                                                                                 ? isEditing[
-                                                                                                      item
-                                                                                                          .id
-                                                                                                  ]
-                                                                                                      .meta_description
+                                                                                                    item
+                                                                                                        .id
+                                                                                                    ]
+                                                                                                    .meta_description
                                                                                                 : ""
                                                                                         }
                                                                                         onChange={(
@@ -863,15 +926,17 @@ const PostTable = ({
                                                                                                 isEditing[
                                                                                                     item
                                                                                                         .id
-                                                                                                ]
+                                                                                                    ]
                                                                                                     .meta_description,
                                                                                             )
                                                                                         }
                                                                                     />
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex flex-row items-center justify-start my-3 shadow-sm">
-                                                                                <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                            <div
+                                                                                className="flex flex-row items-center justify-start my-3 shadow-sm">
+                                                                                <div
+                                                                                    className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                                     <span>
                                                                                         <GalleryVerticalEnd
                                                                                             size={
@@ -879,12 +944,14 @@ const PostTable = ({
                                                                                             }
                                                                                         />
                                                                                     </span>
-                                                                                    <div className="text-md font-medium w-24">
+                                                                                    <div
+                                                                                        className="text-md font-medium w-24">
                                                                                         Kısa
                                                                                         Açıklama
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="border py-2 px-4 text-start rounded-e-lg  w-full">
+                                                                                <div
+                                                                                    className="border py-2 px-4 text-start rounded-e-lg  w-full">
                                                                                     <input
                                                                                         className="p-0 border-none focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
                                                                                         type="text"
@@ -892,12 +959,12 @@ const PostTable = ({
                                                                                             isEditing[
                                                                                                 item
                                                                                                     .id
-                                                                                            ]
+                                                                                                ]
                                                                                                 ? isEditing[
-                                                                                                      item
-                                                                                                          .id
-                                                                                                  ]
-                                                                                                      .content
+                                                                                                    item
+                                                                                                        .id
+                                                                                                    ]
+                                                                                                    .description
                                                                                                 : ""
                                                                                         }
                                                                                         onChange={(
@@ -916,15 +983,17 @@ const PostTable = ({
                                                                                                 isEditing[
                                                                                                     item
                                                                                                         .id
-                                                                                                ]
+                                                                                                    ]
                                                                                                     .content,
                                                                                             )
                                                                                         }
                                                                                     />
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex flex-row items-center justify-start my-3 shadow-sm">
-                                                                                <div className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
+                                                                            <div
+                                                                                className="flex flex-row items-center justify-start my-3 shadow-sm">
+                                                                                <div
+                                                                                    className="flex flex-row gap-1 items-center border py-3 px-4 text-start rounded-s-lg">
                                                                                     <span>
                                                                                         <SendHorizontal
                                                                                             size={
@@ -932,11 +1001,13 @@ const PostTable = ({
                                                                                             }
                                                                                         />
                                                                                     </span>
-                                                                                    <div className="text-md font-medium w-24">
+                                                                                    <div
+                                                                                        className="text-md font-medium w-24">
                                                                                         Kategori
                                                                                     </div>
                                                                                 </div>
-                                                                                <div className="border py-2 px-4 text-start rounded-e-lg  w-full">
+                                                                                <div
+                                                                                    className="border py-2 px-4 text-start rounded-e-lg  w-full">
                                                                                     <select
                                                                                         className="border-none rounded-md  focus:ring-0 focus:border-transparent shadow-none py-0.5"
                                                                                         onChange={(
@@ -948,29 +1019,39 @@ const PostTable = ({
                                                                                             )
                                                                                         }
                                                                                         value={
-                                                                                            item
-                                                                                                .category
-                                                                                                .name
+                                                                                            item.category
+                                                                                                ? item
+                                                                                                    .category
+                                                                                                    .name
+                                                                                                : ""
                                                                                         }
                                                                                     >
-                                                                                        {categories.map(
-                                                                                            (
-                                                                                                cat,
-                                                                                            ) => (
-                                                                                                <option
-                                                                                                    key={
-                                                                                                        cat.id
-                                                                                                    }
-                                                                                                    value={
-                                                                                                        cat.name
-                                                                                                    }
-                                                                                                >
-                                                                                                    {
-                                                                                                        cat.name
-                                                                                                    }
-                                                                                                </option>
-                                                                                            ),
+                                                                                        {item.category ? (
+                                                                                            categories.map(
+                                                                                                (
+                                                                                                    cat,
+                                                                                                ) => (
+                                                                                                    <option
+                                                                                                        key={
+                                                                                                            cat.id
+                                                                                                        }
+                                                                                                        value={
+                                                                                                            cat.name
+                                                                                                        }
+                                                                                                    >
+                                                                                                        {
+                                                                                                            cat.name
+                                                                                                        }
+                                                                                                    </option>
+                                                                                                ),
+                                                                                            )
+                                                                                        ) : (
+                                                                                            <option value="">
+                                                                                                Kategori
+                                                                                                seçilmedi
+                                                                                            </option>
                                                                                         )}
+
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
@@ -1005,30 +1086,30 @@ const PostTable = ({
                                     </TableRow>
                                 ))}
                             </TableBody>
-                        ) : (
-                            <div className="flex justify-center gap-7 mx-auto items-center flex-col py-10">
-                                <span className="!text-[50px] animate-spin">
-                                    ❓
-                                </span>
-                                <span className="text-52">
-                                    Post Yazılmadı Hemen Bir Tane{" "}
-                                    <Link
-                                        href=""
-                                        className="text-blue-500 underline font-bold"
-                                    >
-                                        Yaz
-                                    </Link>
-                                </span>
-                            </div>
-                        )}
-                    </Table>
-                    <Paginate links={posts.links} />
+                        </Table>
+                    ) : (
+                        <div className="flex justify-center gap-7 mx-auto items-center flex-col py-10">
+                            <span className="!text-[50px] animate-spin">
+                                ❓
+                            </span>
+                            <span className="text-52">
+                                Post Yazılmadı Hemen Bir Tane{" "}
+                                <Link
+                                    href={route("post.create")}
+                                    className="text-blue-500 underline font-bold"
+                                >
+                                    Yaz
+                                </Link>
+                            </span>
+                        </div>
+                    )}
+                    <Paginate links={posts.links}/>
                 </TabsContent>
                 <TabsContent value="trashed">
-                    <TrashedPosts trashedPosts={trashedPosts} />
+                    <TrashedPosts trashedPosts={trashedPosts}/>
                 </TabsContent>
             </Tabs>
-            <Toaster />
+            <Toaster/>
         </React.Fragment>
     );
 };

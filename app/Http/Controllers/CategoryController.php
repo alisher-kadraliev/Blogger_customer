@@ -10,13 +10,29 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $search = request()->input('search');
+        $query = Category::query();
+        if($search){
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+        $categories = $query->get();
+
         return Inertia::render('Category/Index',[
             'categories' => $categories
         ]);
     }
-    public function create()
+    public function store(Request $request)
     {
-        return Inertia::render('Category/Create');
+        Category::create($request->validate([
+            'name' => ['required', 'unique:categories'],
+            'slug' => ['required', 'unique:categories'],
+            'description' => ['nullable']
+        ]));
+        return redirect()->back();
+    }
+    public function destroy(Category $category)
+    {
+        $category->delete();
+        return redirect()->back();
     }
 }

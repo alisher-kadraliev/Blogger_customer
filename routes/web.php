@@ -28,6 +28,8 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/posts/{post}/delete-permanently', [PostController::class, 'deletePermanently'])->name('posts.delete-permanently');
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
     Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
+    Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
+    Route::delete('/category/{category}/delete', [CategoryController::class, 'destroy'])->name('category.destroy');
 });
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::middleware('auth')->group(function () {

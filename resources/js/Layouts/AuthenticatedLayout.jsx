@@ -73,16 +73,6 @@ export default function Authenticated({ user, header, children }) {
                                             </NavigationMenuTrigger>
                                             <NavigationMenuContent>
                                                 <div className="flex flex-col gap-3 p-4 w-auto text-ellipsis text-nowrap">
-                                                <NavLink
-                                                    href={route(
-                                                        "category.create",
-                                                    )}
-                                                    active={route().current(
-                                                        "category.create",
-                                                    )}
-                                                >
-                                                    Yeni Kategori
-                                                </NavLink>
                                                     <NavLink
                                                     href={route(
                                                         "category.index",
