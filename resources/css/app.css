@@ -147,3 +147,7 @@ input[type=number] {
     src: url('/public/fonts/Quincy/normal.otf') format('truetype');
 }
 
+.rdw-dropdown-optionwrapper{
+    scrollbar-width: none;
+}
+
