@@ -44,12 +44,13 @@ export default function Table({ auth }) {
         >
             <Head title="Yeni post yaz" />
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-start sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 text-gray-900">
                             <form
                                 onSubmit={handleSubmitForm}
                                 onClick={handleFormClick}
+                                encType="multipart/form-data"
                             >
                                 <div className="space-y-12">
                                     <div className="pb-12">
@@ -62,7 +63,8 @@ export default function Table({ auth }) {
                                                     Başlık Ekle
                                                 </label>
                                                 <div className="mt-2">
-                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div
+                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
                                                             id="username"
@@ -89,10 +91,31 @@ export default function Table({ auth }) {
                                                     htmlFor="username"
                                                     className="block text-sm font-medium leading-6 text-gray-900"
                                                 >
+                                                    Başlık Ekle
+                                                </label>
+                                                <div className="mt-2">
+                                                    <div
+                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                 <input type="file"
+                                                 accept="image/*"
+                                                        onChange={(e) => setData('image',e.target.files[0])}
+                                                        className="block w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+
+                                                 />
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div className="sm:col-span-4">
+                                                <label
+                                                    htmlFor="username"
+                                                    className="block text-sm font-medium leading-6 text-gray-900"
+                                                >
                                                     Slug Ekle
                                                 </label>
                                                 <div className="mt-2">
-                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div
+                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
                                                             id="username"
@@ -165,7 +188,7 @@ export default function Table({ auth }) {
                                                                 ],
                                                             },
                                                             fontFamily: {
-                                                                options: ['Quincy-Italic','Quincy-Regular','Inter-Regular'],
+                                                                options: ['Quincy-Italic', 'Quincy-Regular', 'Inter-Regular'],
                                                                 className: undefined,
                                                                 component: undefined,
                                                                 dropdownClassName: undefined,
@@ -175,7 +198,7 @@ export default function Table({ auth }) {
                                                                 className: "no-scroll",
                                                                 component: undefined,
                                                                 dropdownClassName: undefined,
-                                                                options: [ 'center', 'right', 'justify'],
+                                                                options: ['center', 'right', 'justify'],
                                                             },
 
                                                             image: {
@@ -188,7 +211,7 @@ export default function Table({ auth }) {
                                                                 uploadCallback: undefined,
                                                                 previewImage: true,
                                                                 inputAccept: 'image/gif,image/webp,image/jpeg,image/jpg,image/png,image/svg',
-                                                                alt: { present: true, mandatory: true },
+                                                                alt: {present: true, mandatory: true},
                                                                 defaultSize: {
                                                                     height: 'auto',
                                                                     width: 'auto',
@@ -201,7 +224,8 @@ export default function Table({ auth }) {
                                             </div>
                                             <div className="sm:col-span-4 hidden">
                                                 <div className="mt-2">
-                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div
+                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
                                                             value={

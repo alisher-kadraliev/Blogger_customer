@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Link, router, usePage } from "@inertiajs/react";
-import { useTranslation } from "react-i18next";
+import React, {useEffect, useState} from "react";
+import {Link, router, usePage} from "@inertiajs/react";
+import {useTranslation} from "react-i18next";
 import slugify from "slugify";
 import Paginate from "@/Pages/Post/Paginate.jsx";
 
@@ -52,21 +52,21 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/Components/ui/tabs";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast, {Toaster} from "react-hot-toast";
 import TrashedPosts from "@/Pages/Post/TrashedPosts/TrashedPosts.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
 
 const PostTable = ({
-    posts,
-    statuses,
-    categories,
-    trashedPosts,
-    totalPost,
-}) => {
-    const { t } = useTranslation();
+                       posts,
+                       statuses,
+                       categories,
+                       trashedPosts,
+                       totalPost,
+                   }) => {
+    const {t} = useTranslation();
     const user = usePage().props.auth.user;
     const [isEditing, setIsEditing] = useState({});
     const [isHoveredText, setIsHoveredText] = useState(false);
@@ -76,8 +76,8 @@ const PostTable = ({
         setSearch(value);
         router.get(
             "post",
-            { search: value },
-            { preserveScroll: true, preserveState: true },
+            {search: value},
+            {preserveScroll: true, preserveState: true},
         );
     };
 
@@ -107,7 +107,7 @@ const PostTable = ({
         });
         setIsEditing((prev) => ({
             ...prev,
-            [id]: { ...prev[id], title: newTitle, slug: newSlug },
+            [id]: {...prev[id], title: newTitle, slug: newSlug},
         }));
     };
     const handleSaveTitle = (postId, title) => {
@@ -122,7 +122,7 @@ const PostTable = ({
     const handleChangeMetaT = (id, newMetaTitle) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: { ...prev[id], meta_title: newMetaTitle },
+            [id]: {...prev[id], meta_title: newMetaTitle},
         }));
     };
     const createSlug = (title) =>
@@ -134,7 +134,7 @@ const PostTable = ({
     const handleChangeMetaD = (id, metaD) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: { ...prev[id], meta_description: metaD },
+            [id]: {...prev[id], meta_description: metaD},
         }));
     };
     const handleSaveMetaT = (postId, metaTitle) => {
@@ -142,7 +142,7 @@ const PostTable = ({
             metaTitle !==
             posts.data.find((post) => post.id === postId).meta_title
         ) {
-            router.patch(`/posts/${postId}/update`, { meta_title: metaTitle });
+            router.patch(`/posts/${postId}/update`, {meta_title: metaTitle});
         }
     };
     const handleSaveMetaD = (postId, metaD) => {
@@ -159,29 +159,29 @@ const PostTable = ({
     const handleChangeContent = (id, content) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: { ...prev[id], content: content },
+            [id]: {...prev[id], content: content},
         }));
     };
     const handleSaveContent = (postId, content) => {
         if (content !== posts.data.find((post) => post.id === postId).content) {
-            router.patch(`/posts/${postId}/update`, { content: content });
+            router.patch(`/posts/${postId}/update`, {content: content});
         }
     };
     const handleChangeLikes = (id, likes) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: { ...prev[id], likes: likes },
+            [id]: {...prev[id], likes: likes},
         }));
     };
     const handleSaveLikes = (postId, likes) => {
         if (likes !== posts.data.find((post) => post.id === postId).likes) {
-            router.patch(`/posts/${postId}/update`, { likes: likes });
+            router.patch(`/posts/${postId}/update`, {likes: likes});
         }
     };
     const handleChangeRead = (id, reading_time) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: { ...prev[id], reading_time: reading_time },
+            [id]: {...prev[id], reading_time: reading_time},
         }));
     };
     const handleSaveRead = (postId, reading_time) => {
@@ -197,7 +197,7 @@ const PostTable = ({
     const handleChangeView = (id, views) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: { ...prev[id], views: views },
+            [id]: {...prev[id], views: views},
         }));
     };
     const handleSaveView = (postId, views) => {
@@ -210,7 +210,7 @@ const PostTable = ({
     const handleTogglePublish = (postId, isPublished) => {
         router.patch(
             `/posts/${postId}/update`,
-            { published: isPublished },
+            {published: isPublished},
             {
                 onSuccess: () => {
                     if (isPublished) {
@@ -245,8 +245,8 @@ const PostTable = ({
         setSearch("");
         router.get(
             "post",
-            { search: "" },
-            { preserveScroll: true, preserveState: true },
+            {search: ""},
+            {preserveScroll: true, preserveState: true},
         );
     };
 
@@ -254,7 +254,7 @@ const PostTable = ({
         const newStatus = e.target.value;
         router.patch(
             `/posts/${postId}/update`,
-            { status: newStatus },
+            {status: newStatus},
             {
                 onSuccess: () => toast.success("Güncellendi"),
                 onError: () => "Hata oluştu.",
@@ -269,7 +269,7 @@ const PostTable = ({
         ).id;
         router.patch(
             `/posts/${postId}/update`,
-            { category_id: categoryId },
+            {category_id: categoryId},
             {
                 onSuccess: () =>
                     toast.success("Kategori Değişti" + newCategory),
@@ -476,7 +476,7 @@ const PostTable = ({
                                                                                             </div>
                                                                                             <img
                                                                                                 src={
-                                                                                                    item.image
+                                                                                                    item.image_url
                                                                                                 }
                                                                                                 className="w-72 h-40 object-cover rounded-md shadow-md"
                                                                                                 alt=""
@@ -679,7 +679,7 @@ const PostTable = ({
                                                                                 <PopoverContent>
                                                                                     <img
                                                                                         src={
-                                                                                            item.image
+                                                                                            item.image_url
                                                                                         }
                                                                                         alt=""
                                                                                     />
@@ -1007,9 +1007,11 @@ const PostTable = ({
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
-                                                                            <div dangerouslySetInnerHTML={{__html: item.content}}>
-
-                                                                            </div>
+                                                                            <div
+                                                                                dangerouslySetInnerHTML={{
+                                                                                    __html: item.content,
+                                                                                }}
+                                                                            ></div>
                                                                         </TabsContent>
                                                                         <TabsContent value="comments">
                                                                             Comments

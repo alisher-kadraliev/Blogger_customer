@@ -22,6 +22,10 @@ class PostController extends Controller
             $query->where('title', 'like', '%' . $searchPost . '%');
         }
         $posts = $query->paginate(5)->onEachSide(1);
+        $posts->getCollection()->transform(function ($post){
+            $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
+            return $post;
+        });
         $statuses = Post::select('status')->distinct()->pluck('status');
         $categories = Category::all();
         $totalPosts = Post::count();
@@ -45,6 +49,10 @@ class PostController extends Controller
             $query->where('title', 'like', '%' . 'searchPost' . '%');
         }
         $posts = $query->paginate(5)->onEachSide(1);
+        $posts->getCollection()->transform(function ($post) {
+            $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
+            return $post;
+        });
         $statuses = Post::select('status')->distinct()->pluck('status');
         $categories = Category::all();
         $totalPosts = Post::count();
@@ -121,12 +129,19 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        Post::create($request->validate([
+        $validatedData = $request->validate([
             'title' => ['required', 'unique:posts'],
             'slug' => ['required', 'unique:posts'],
             'content' => ['nullable'],
-            'author_id' => 'required|integer|exists:users,id'
-        ]));
+            'author_id' => 'required|integer|exists:users,id',
+            'image' => 'sometimes|file||image|max:5000',
+        ]);
+        if($request->hasFile('image')){
+            $imagePath = $request->file('image')->store('posts','public');
+            $validatedData['image'] = $imagePath;
+        }
+
+        Post::create($validatedData);
 
         return redirect()->route('post.index');
     }
