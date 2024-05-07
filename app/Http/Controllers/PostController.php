@@ -6,8 +6,6 @@ use App\Models\Category;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use SebastianBergmann\CodeCoverage\Report\Xml\Project;
-use function Termwind\render;
 
 class PostController extends Controller
 {
@@ -22,7 +20,7 @@ class PostController extends Controller
             $query->where('title', 'like', '%' . $searchPost . '%');
         }
         $posts = $query->paginate(5)->onEachSide(1);
-        $posts->getCollection()->transform(function ($post){
+        $posts->getCollection()->transform(function ($post) {
             $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
             return $post;
         });
@@ -74,6 +72,7 @@ class PostController extends Controller
             'slug' => 'sometimes|required|string|unique:posts,slug, ' . $post->id,
             'meta_title' => 'sometimes|nullable|string',
             'meta_description' => 'sometimes|nullable|string',
+            'description' => 'sometimes|nullable|string',
             'content' => 'sometimes|nullable|string',
             'likes' => 'sometimes|nullable|integer',
             'reading_time' => 'sometimes|nullable|integer',
@@ -111,6 +110,9 @@ class PostController extends Controller
         if ($request->has('views')) {
             $post->views = $validatedData['views'];
         }
+        if ($request->has('description')) {
+            $post->description = $validatedData['description'];
+        }
         $post->fill($validatedData);
         $post->save();
         return redirect()->back();
@@ -121,7 +123,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Post/Create');
+        $categories = Category::all();
+        return Inertia::render('Post/Create',
+            ['categories' => $categories]);
     }
 
     /**
@@ -132,12 +136,17 @@ class PostController extends Controller
         $validatedData = $request->validate([
             'title' => ['required', 'unique:posts'],
             'slug' => ['required', 'unique:posts'],
-            'content' => ['nullable'],
+            'meta_title' => ['nullable'],
+            'meta_description' => ['nullable'],
+            'description' => ['nullable'],
+            'content' => ['required'],
+            'category_id' => 'required|string',
             'author_id' => 'required|integer|exists:users,id',
-            'image' => 'sometimes|file||image|max:5000',
+            'image' => 'sometimes|file||image|max:8000',
         ]);
-        if($request->hasFile('image')){
-            $imagePath = $request->file('image')->store('posts','public');
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('posts', 'public');
             $validatedData['image'] = $imagePath;
         }
 

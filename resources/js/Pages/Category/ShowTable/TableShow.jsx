@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Head, Link, router, useForm } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import { Textarea } from "@/Components/ui/textarea"
+import { Textarea } from "@/Components/ui/textarea";
 
 import {
     Table,
@@ -24,9 +24,6 @@ import toast, { Toaster } from "react-hot-toast";
 import TextInput from "@/Components/TextInput.jsx";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
 import Modal from "@/Components/Modal.jsx";
-import InputLabel from "@/Components/InputLabel.jsx";
-import InputError from "@/Components/InputError.jsx";
-import DangerButton from "@/Components/DangerButton.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import slugify from "slugify";
 
@@ -35,7 +32,7 @@ const TableShow = ({ categories, auth }) => {
     const [search, setSearch] = useState("");
     const [openModal, setOpenModal] = useState(false);
 
-    const { data, setData,reset, post, errors } = useForm({
+    const { data, setData, reset, post, errors } = useForm({
         name: "",
         slug: "",
         description: "",
@@ -56,11 +53,11 @@ const TableShow = ({ categories, auth }) => {
 
     const handleSubmitForm = (e) => {
         e.preventDefault();
-        post("/category/store",{
+        post("/category/store", {
             onSuccess: () => {
-                toast.success('Kategori Eklendi')
-                closeModal()
-            }
+                toast.success("Kategori Eklendi");
+                closeModal();
+            },
         });
     };
     const handleSearch = (e) => {
@@ -176,11 +173,16 @@ const TableShow = ({ categories, auth }) => {
                                         Tanım Ekle (Isteğe bağlı)
                                     </label>
                                     <div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
-                                        <Textarea className="focus:border-none"
-                                                  value={data.description}
-                                                  onChange={(e) => setData('description', e.target.value)}
+                                        <Textarea
+                                            className="focus:border-none"
+                                            value={data.description}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "description",
+                                                    e.target.value,
+                                                )
+                                            }
                                         />
-
                                     </div>
                                     {errors.description && (
                                         <div className="text-red-500">
@@ -192,7 +194,9 @@ const TableShow = ({ categories, auth }) => {
                                             Iptal
                                         </SecondaryButton>
 
-                                        <PrimaryButton className="ml-2">Ekle</PrimaryButton>
+                                        <PrimaryButton className="ml-2">
+                                            Ekle
+                                        </PrimaryButton>
                                     </div>
                                 </form>
                             </Modal>

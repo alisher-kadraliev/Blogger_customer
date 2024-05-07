@@ -93,6 +93,7 @@ const PostTable = ({
                 reading_time: post.reading_time,
                 views: post.views,
                 category: post.category.id,
+                description: post.description,
             };
             return acc;
         }, {});
@@ -165,6 +166,17 @@ const PostTable = ({
     const handleSaveContent = (postId, content) => {
         if (content !== posts.data.find((post) => post.id === postId).content) {
             router.patch(`/posts/${postId}/update`, {content: content});
+        }
+    };
+    const handleChangeDesc = (id, content) => {
+        setIsEditing((prev) => ({
+            ...prev,
+            [id]: {...prev[id], description: content},
+        }));
+    };
+    const handleSaveDesc = (postId, content) => {
+        if (content !== posts.data.find((post) => post.id === postId).description) {
+            router.patch(`/posts/${postId}/update`, {description: content});
         }
     };
     const handleChangeLikes = (id, likes) => {
@@ -927,7 +939,7 @@ const PostTable = ({
                                                                                         onChange={(
                                                                                             e,
                                                                                         ) =>
-                                                                                            handleChangeContent(
+                                                                                            handleChangeDesc(
                                                                                                 item.id,
                                                                                                 e
                                                                                                     .target
@@ -935,13 +947,13 @@ const PostTable = ({
                                                                                             )
                                                                                         }
                                                                                         onBlur={() =>
-                                                                                            handleSaveContent(
+                                                                                            handleSaveDesc(
                                                                                                 item.id,
                                                                                                 isEditing[
                                                                                                     item
                                                                                                         .id
                                                                                                 ]
-                                                                                                    .content,
+                                                                                                    .description,
                                                                                             )
                                                                                         }
                                                                                     />
