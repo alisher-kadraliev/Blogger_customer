@@ -36,8 +36,6 @@ const Index = ({
                                 categories={categories}
                                 trashedPosts={trashedPosts}
                             />
-
-                            <pre> {JSON.stringify(posts, undefined, 2)}</pre>
                         </div>
                     </div>
                 </div>

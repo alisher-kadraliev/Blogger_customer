@@ -208,9 +208,3 @@ input[type=number] {
     color: #1a73e8;
     text-decoration: underline;
 }
-.fixed-toolbar.rdw-editor-toolbar {
-    position: fixed;
-    top: 0;
-    z-index: 100;
-    transition: .3s ease-in-out;
-}

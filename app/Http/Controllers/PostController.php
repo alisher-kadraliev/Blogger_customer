@@ -14,7 +14,7 @@ class PostController extends Controller
      */
     public function index()
     {
-        $query = Post::query()->with('category');
+        $query = Post::query()->with('category')->orderBy('created_at','desc');
         $searchPost = request()->input('search');
         if ($searchPost) {
             $query->where('title', 'like', '%' . $searchPost . '%');
@@ -41,7 +41,7 @@ class PostController extends Controller
     public function PostTable()
     {
 
-        $query = Post::query()->with('category');
+        $query = Post::query()->with('category')->orderBy('created_at','desc');
         $searchPost = request()->input('search');
         if ($searchPost) {
             $query->where('title', 'like', '%' . 'searchPost' . '%');
@@ -78,10 +78,14 @@ class PostController extends Controller
             'reading_time' => 'sometimes|nullable|integer',
             'published' => 'sometimes|nullable|boolean',
             'views' => 'sometimes|nullable|integer',
+            'image_alt' => 'sometimes|nullable|string',
             'category_id' => 'sometimes|required|exists:categories,id',
         ]);
         if ($request->has('title')) {
             $post->title = $validatedData["title"];
+        }
+        if ($request->has('image_alt')) {
+            $post->image_alt = $validatedData["image_alt"];
         }
         if ($request->has('status')) {
             $post->status = $validatedData['status'];
@@ -143,6 +147,8 @@ class PostController extends Controller
             'category_id' => 'required|string',
             'author_id' => 'required|integer|exists:users,id',
             'image' => 'sometimes|file||image|max:8000',
+            'reading_time' => 'nullable|integer',
+            'image_alt' => 'nullable|string',
         ]);
 
         if ($request->hasFile('image')) {

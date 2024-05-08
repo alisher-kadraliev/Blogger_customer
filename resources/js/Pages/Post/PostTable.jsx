@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {Link, router, usePage} from "@inertiajs/react";
-import {useTranslation} from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { Link, router, usePage } from "@inertiajs/react";
+import { useTranslation } from "react-i18next";
 import slugify from "slugify";
 import Paginate from "@/Pages/Post/Paginate.jsx";
 
@@ -37,6 +37,14 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/Components/ui/dialog";
 
 import {
     Sheet,
@@ -52,21 +60,21 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/Components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
-import toast, {Toaster} from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import TrashedPosts from "@/Pages/Post/TrashedPosts/TrashedPosts.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
 
 const PostTable = ({
-                       posts,
-                       statuses,
-                       categories,
-                       trashedPosts,
-                       totalPost,
-                   }) => {
-    const {t} = useTranslation();
+    posts,
+    statuses,
+    categories,
+    trashedPosts,
+    totalPost,
+}) => {
+    const { t } = useTranslation();
     const user = usePage().props.auth.user;
     const [isEditing, setIsEditing] = useState({});
     const [isHoveredText, setIsHoveredText] = useState(false);
@@ -76,8 +84,8 @@ const PostTable = ({
         setSearch(value);
         router.get(
             "post",
-            {search: value},
-            {preserveScroll: true, preserveState: true},
+            { search: value },
+            { preserveScroll: true, preserveState: true },
         );
     };
 
@@ -93,6 +101,7 @@ const PostTable = ({
                 reading_time: post.reading_time,
                 views: post.views,
                 category: post.category.id,
+                image_alt: post.image_alt,
                 description: post.description,
             };
             return acc;
@@ -108,7 +117,7 @@ const PostTable = ({
         });
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], title: newTitle, slug: newSlug},
+            [id]: { ...prev[id], title: newTitle, slug: newSlug },
         }));
     };
     const handleSaveTitle = (postId, title) => {
@@ -123,7 +132,7 @@ const PostTable = ({
     const handleChangeMetaT = (id, newMetaTitle) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], meta_title: newMetaTitle},
+            [id]: { ...prev[id], meta_title: newMetaTitle },
         }));
     };
     const createSlug = (title) =>
@@ -135,7 +144,7 @@ const PostTable = ({
     const handleChangeMetaD = (id, metaD) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], meta_description: metaD},
+            [id]: { ...prev[id], meta_description: metaD },
         }));
     };
     const handleSaveMetaT = (postId, metaTitle) => {
@@ -143,7 +152,21 @@ const PostTable = ({
             metaTitle !==
             posts.data.find((post) => post.id === postId).meta_title
         ) {
-            router.patch(`/posts/${postId}/update`, {meta_title: metaTitle});
+            router.patch(`/posts/${postId}/update`, { meta_title: metaTitle });
+        }
+    };
+    const handleChangeAlt = (id, imageAlt) => {
+        setIsEditing((prev) => ({
+            ...prev,
+            [id]: { ...prev[id], image_alt: imageAlt },
+        }));
+    };
+    const handleSaveAlt = (postId, imageAlt) => {
+        if (
+            imageAlt !==
+            posts.data.find((post) => post.id === postId).image_alt
+        ) {
+            router.patch(`/posts/${postId}/update`, { image_alt: imageAlt });
         }
     };
     const handleSaveMetaD = (postId, metaD) => {
@@ -160,40 +183,43 @@ const PostTable = ({
     const handleChangeContent = (id, content) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], content: content},
+            [id]: { ...prev[id], content: content },
         }));
     };
     const handleSaveContent = (postId, content) => {
         if (content !== posts.data.find((post) => post.id === postId).content) {
-            router.patch(`/posts/${postId}/update`, {content: content});
+            router.patch(`/posts/${postId}/update`, { content: content });
         }
     };
     const handleChangeDesc = (id, content) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], description: content},
+            [id]: { ...prev[id], description: content },
         }));
     };
     const handleSaveDesc = (postId, content) => {
-        if (content !== posts.data.find((post) => post.id === postId).description) {
-            router.patch(`/posts/${postId}/update`, {description: content});
+        if (
+            content !==
+            posts.data.find((post) => post.id === postId).description
+        ) {
+            router.patch(`/posts/${postId}/update`, { description: content });
         }
     };
     const handleChangeLikes = (id, likes) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], likes: likes},
+            [id]: { ...prev[id], likes: likes },
         }));
     };
     const handleSaveLikes = (postId, likes) => {
         if (likes !== posts.data.find((post) => post.id === postId).likes) {
-            router.patch(`/posts/${postId}/update`, {likes: likes});
+            router.patch(`/posts/${postId}/update`, { likes: likes });
         }
     };
     const handleChangeRead = (id, reading_time) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], reading_time: reading_time},
+            [id]: { ...prev[id], reading_time: reading_time },
         }));
     };
     const handleSaveRead = (postId, reading_time) => {
@@ -209,7 +235,7 @@ const PostTable = ({
     const handleChangeView = (id, views) => {
         setIsEditing((prev) => ({
             ...prev,
-            [id]: {...prev[id], views: views},
+            [id]: { ...prev[id], views: views },
         }));
     };
     const handleSaveView = (postId, views) => {
@@ -222,7 +248,7 @@ const PostTable = ({
     const handleTogglePublish = (postId, isPublished) => {
         router.patch(
             `/posts/${postId}/update`,
-            {published: isPublished},
+            { published: isPublished },
             {
                 onSuccess: () => {
                     if (isPublished) {
@@ -257,8 +283,8 @@ const PostTable = ({
         setSearch("");
         router.get(
             "post",
-            {search: ""},
-            {preserveScroll: true, preserveState: true},
+            { search: "" },
+            { preserveScroll: true, preserveState: true },
         );
     };
 
@@ -266,7 +292,7 @@ const PostTable = ({
         const newStatus = e.target.value;
         router.patch(
             `/posts/${postId}/update`,
-            {status: newStatus},
+            { status: newStatus },
             {
                 onSuccess: () => toast.success("Güncellendi"),
                 onError: () => "Hata oluştu.",
@@ -281,10 +307,10 @@ const PostTable = ({
         ).id;
         router.patch(
             `/posts/${postId}/update`,
-            {category_id: categoryId},
+            { category_id: categoryId },
             {
                 onSuccess: () =>
-                    toast.success("Kategori Değişti" + newCategory),
+                    toast.success("Kategori Değişti " + newCategory),
                 onError: () => "Hata oluştu.",
             },
         );
@@ -467,34 +493,84 @@ const PostTable = ({
                                                                             </div>
                                                                             <Popover>
                                                                                 <div className="flex flex-row justify-start items-start my-5 gap-5 max-lg:flex-col">
-                                                                                    <PopoverTrigger>
-                                                                                        <div
-                                                                                            className="relative"
-                                                                                            onMouseEnter={() =>
-                                                                                                setIsHoveredText(
-                                                                                                    true,
-                                                                                                )
-                                                                                            }
-                                                                                            onMouseLeave={() =>
-                                                                                                setIsHoveredText(
-                                                                                                    false,
-                                                                                                )
-                                                                                            }
-                                                                                        >
-                                                                                            <div className="bg-gradient-to-b from-black/40 to-black/10 text-white/50 py-2 absolute top-0 w-full">
-                                                                                                {isHoveredText
-                                                                                                    ? "Tıkla 👆"
-                                                                                                    : item.image_alt}
+                                                                                    <Dialog>
+                                                                                        <DialogTrigger>
+                                                                                            <div
+                                                                                                className="relative"
+                                                                                                onMouseEnter={() =>
+                                                                                                    setIsHoveredText(
+                                                                                                        true,
+                                                                                                    )
+                                                                                                }
+                                                                                                onMouseLeave={() =>
+                                                                                                    setIsHoveredText(
+                                                                                                        false,
+                                                                                                    )
+                                                                                                }
+                                                                                            >
+                                                                                                <div className="bg-gradient-to-b from-black/40 to-black/10 text-white/50 py-2 absolute top-0 w-full">
+                                                                                                    {isHoveredText
+                                                                                                        ? "Tıkla 👆"
+                                                                                                        : item.image_alt}
+                                                                                                </div>
+                                                                                                <img
+                                                                                                    src={
+                                                                                                        item.image_url ||
+                                                                                                        "/404/404.png"
+                                                                                                    }
+                                                                                                    className="w-72 h-40 object-cover rounded-md shadow-md"
+                                                                                                    alt={
+                                                                                                        item.image_alt
+                                                                                                    }
+                                                                                                />
                                                                                             </div>
+                                                                                        </DialogTrigger>
+                                                                                        <DialogContent>
+                                                                                            <DialogTitle>
+                                                                                                <div className="flex flex-row items-center gap-3">
+                                                                                                <div className="w-1/4">Metin alt: </div>
+                                                                                                <input
+                                                                                                    className="border-none text-gray-500 focus:border-none border-white focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
+                                                                                                    type="text"
+                                                                                                    value={
+                                                                                                        isEditing[
+                                                                                                            item
+                                                                                                                .id
+                                                                                                        ]
+                                                                                                            ? isEditing[
+                                                                                                                  item
+                                                                                                                      .id
+                                                                                                              ]
+                                                                                                                  .image_alt
+                                                                                                            : ""
+                                                                                                    }
+                                                                                                    onChange={e => handleChangeAlt(item.id,e.target.value)}
+                                                                                                    onBlur={() =>
+                                                                                                        handleSaveAlt(
+                                                                                                            item.id,
+                                                                                                            isEditing[
+                                                                                                                item
+                                                                                                                    .id
+                                                                                                                ]
+                                                                                                                .image_alt,
+                                                                                                        )
+                                                                                                    }
+                                                                                                />
+                                                                                                </div>
+                                                                                            </DialogTitle>
                                                                                             <img
                                                                                                 src={
-                                                                                                    item.image_url
+                                                                                                    item.image_url ||
+                                                                                                    "/404/404.png"
                                                                                                 }
-                                                                                                className="w-72 h-40 object-cover rounded-md shadow-md"
-                                                                                                alt=""
+                                                                                                alt={
+                                                                                                    item.image_alt
+                                                                                                }
+                                                                                                className=""
                                                                                             />
-                                                                                        </div>
-                                                                                    </PopoverTrigger>
+                                                                                        </DialogContent>
+                                                                                    </Dialog>
+
                                                                                     <div className="flex flex-col gap-2 justify-center items-center">
                                                                                         {item.likes ===
                                                                                         0 ? (
@@ -683,24 +759,25 @@ const PostTable = ({
                                                                                                 {
                                                                                                     item.update_status
                                                                                                 }{" "}
-                                                                                                güncelediniz
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div className="flex flex-row max-lg:flex-col gap-2 justify-center items-center">
+                                                                                            <div className="text-[30px]">
+                                                                                                <StickyNote />
+                                                                                            </div>
+                                                                                            <div className="flex flex-row gap-2 bg-white shadow-md py-1 rounded-full px-2 items-center">
+                                                                                                Content
+                                                                                                Sözcük
+                                                                                                Sayısı:{" "}
+                                                                                                {
+                                                                                                    item
+                                                                                                        .content
+                                                                                                        .length
+                                                                                                }
                                                                                             </div>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                                <PopoverContent>
-                                                                                    <img
-                                                                                        src={
-                                                                                            item.image_url
-                                                                                        }
-                                                                                        alt=""
-                                                                                    />
-                                                                                    <div className="text-center font-medium text-lg mt-2 text-gray-500">
-                                                                                        {
-                                                                                            item.image_alt
-                                                                                        }
-                                                                                    </div>
-                                                                                </PopoverContent>
                                                                             </Popover>
                                                                             <label>
                                                                                 <input
@@ -1019,6 +1096,7 @@ const PostTable = ({
                                                                                     </select>
                                                                                 </div>
                                                                             </div>
+
                                                                             <div
                                                                                 dangerouslySetInnerHTML={{
                                                                                     __html: item.content,

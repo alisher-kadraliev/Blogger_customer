@@ -6,9 +6,9 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { convertToRaw, EditorState } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import slugify from "slugify";
-import {
-    ImageUp
-} from "lucide-react";
+import { ImageUp } from "lucide-react";
+import NavLink from "@/Components/NavLink.jsx";
+
 export default function Table({ auth, categories }) {
     const { data, setData, post, errors } = useForm({
         title: "",
@@ -18,23 +18,62 @@ export default function Table({ auth, categories }) {
         description: "",
         content: "",
         category_id: "",
+        reading_time: "",
+        image_alt: "",
         author_id: auth.user.id,
     });
-
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
-    const [isFocused, setIsFocused] = useState(false);  // Track focus
-    const [contentLength, setContentLength] = useState(0);  // Track content length
+    const [isFocused, setIsFocused] = useState(false); // Track focus
+    const [contentLength, setContentLength] = useState(0); // Track content length
+    const [readingTime, setReadingTime] = useState(0);
+    const [image, setImage] = useState(null);
+    const [previewUrl, setPreviewUrl] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+    const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+
+    const handleChangeImage = (e,image) => {
+        const file = e.target.files[0];
+        if (file) {
+            setIsLoading(true);
+            setImage(file);
+            setData("image", file);
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setTimeout(() => {
+                    setPreviewUrl(reader.result);
+                    setIsLoading(false);
+
+                    // Load the image to get its size
+                    const img = new Image();
+                    img.onload = () => {
+                        setImageSize({ width: img.width, height: img.height});
+                    };
+                    img.src = reader.result;
+                }, 1000);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     const onEditorStateChange = (editorState) => {
         setEditorState(editorState);
-        const content = draftToHtml(
-            convertToRaw(editorState.getCurrentContent()),
-        );
-        setData("content", content);
+        const contentState = editorState.getCurrentContent();
+        const plainText = contentState.getPlainText();
+        const wordCount = plainText.trim().split(/\s+/).length; // Counts the words
+        const readingTime = calculateReadingTime(wordCount);
+        setReadingTime(readingTime);
+        const content = draftToHtml(convertToRaw(contentState));
         setContentLength(content.length);
+        setData((data) => ({ ...data, content, reading_time: readingTime }));
     };
+    const calculateReadingTime = (wordCount) => {
+        const wordsPerMinute = 250; // Average reading speed of an adult (roughly 250 wpm)
+        return Math.ceil(wordCount / wordsPerMinute);
+    };
+
     const handleSubmitForm = (e) => {
         e.preventDefault();
-        post("/post");
+        post("/post", { preserveScroll: true, preserveState: true });
     };
     const handleFocus = () => {
         setIsFocused(true);
@@ -59,25 +98,7 @@ export default function Table({ auth, categories }) {
         });
         setData((data) => ({ ...data, title: newTitle, slug: newSlug }));
     };
-    const handleDragOver = (e) => {
-        e.preventDefault(); // Necessary to allow drop
-    };
-    const handleDrop = (e) => {
-        e.preventDefault();
-        const files = e.dataTransfer.files;
-        if (files.length) {
-            setData('image', files[0]);
-        }
-    };
-    const handleDragEnter = (e) => {
-        e.preventDefault();
-        // Set some state for visual feedback
-    };
 
-    const handleDragLeave = (e) => {
-        e.preventDefault();
-        // Set some state to remove visual feedback
-    };
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -100,7 +121,6 @@ export default function Table({ auth, categories }) {
                                 <div className="space-y-12">
                                     <div className="pb-12">
                                         <div className="mt-0 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-
                                             <div className="sm:col-span-full">
                                                 <label
                                                     htmlFor="username"
@@ -109,8 +129,7 @@ export default function Table({ auth, categories }) {
                                                     Başlık Ekle
                                                 </label>
                                                 <div className="mt-2">
-                                                    <div
-                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
                                                             id="username"
@@ -129,8 +148,7 @@ export default function Table({ auth, categories }) {
                                                     )}
                                                 </div>
                                             </div>
-                                            <div
-                                                className="sm:col-span-full flex flex-row gap-3 items-center border-b border-gray-900/10 pb-3">
+                                            <div className="sm:col-span-full flex flex-row gap-3 items-center border-b border-gray-900/10 pb-3">
                                                 <span className="text-nowrap">
                                                     Slug (permalink):{" "}
                                                 </span>
@@ -157,8 +175,7 @@ export default function Table({ auth, categories }) {
                                                     Meta Title
                                                 </label>
                                                 <div className="mt-2">
-                                                    <div
-                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
                                                             value={
@@ -186,8 +203,7 @@ export default function Table({ auth, categories }) {
                                                     Meta Description
                                                 </label>
                                                 <div className="mt-2">
-                                                    <div
-                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
                                                             value={
@@ -218,8 +234,7 @@ export default function Table({ auth, categories }) {
                                                     ona tıklaması için)
                                                 </label>
                                                 <div className="mt-2">
-                                                    <div
-                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <textarea
                                                             rows={3}
                                                             value={
@@ -287,14 +302,25 @@ export default function Table({ auth, categories }) {
                                                 </label>
                                                 <div
                                                     className="mt-2 min-h-[300px] h-full shadow-[rgba(7,_65,_210,_0.1)_0px_0px_100px] p-5 editor"
-                                                    onFocus={handleFocus} onBlur={handleBlur}
+                                                    onFocus={handleFocus}
+                                                    onBlur={handleBlur}
                                                     onClick={(e) =>
                                                         e.stopPropagation()
                                                     }
                                                 >
-                                                    <div className="fixed bottom-0 bg-white z-50 left-0 pt-1 pr-2 rounded-lg">
-                                                   Sözcük sayısı: {contentLength}
+                                                    <div
+                                                        className={` bottom-0 bg-white z-50 left-0 pt-1 pr-2 flex flex-row gap-4 rounded-lg ${isFocused ? "fixed" : "hidden"}`}
+                                                    >
+                                                        <span>
+                                                            Sözcük sayısı:{" "}
+                                                            {contentLength}
+                                                        </span>
+                                                        <span>
+                                                            Okuma süresi:{" "}
+                                                            {readingTime} dakika
+                                                        </span>
                                                     </div>
+
                                                     <Editor
                                                         editorState={
                                                             editorState
@@ -302,11 +328,10 @@ export default function Table({ auth, categories }) {
                                                         placeholder="İçerik ekleyin..."
                                                         wrapperClassName="demo-wrapper"
                                                         editorClassName="demo-editor"
-                                                        toolbarClassName={`rdw-editor-toolbar ${isFocused && isContentLarge ? 'fixed-toolbar' : ''}`}
+                                                        toolbarClassName={`rdw-editor-toolbar ${isFocused && isContentLarge ? "fixed-toolbar" : ""}`}
                                                         onEditorStateChange={
                                                             onEditorStateChange
                                                         }
-                                                        // toolbarOnFocus
                                                         toolbar={{
                                                             blockType: {
                                                                 inDropdown: true,
@@ -322,11 +347,11 @@ export default function Table({ auth, categories }) {
                                                                     "Code",
                                                                 ],
                                                                 className:
-                                                                undefined,
+                                                                    undefined,
                                                                 component:
-                                                                undefined,
+                                                                    undefined,
                                                                 dropdownClassName:
-                                                                undefined,
+                                                                    undefined,
                                                                 styles: {
                                                                     H1: "editor-heading-h1",
                                                                     H2: "editor-heading-h2",
@@ -366,20 +391,20 @@ export default function Table({ auth, categories }) {
                                                                     "Inter-Regular",
                                                                 ],
                                                                 className:
-                                                                undefined,
+                                                                    undefined,
                                                                 component:
-                                                                undefined,
+                                                                    undefined,
                                                                 dropdownClassName:
-                                                                undefined,
+                                                                    undefined,
                                                             },
                                                             textAlign: {
                                                                 inDropdown: true,
                                                                 className:
                                                                     "no-scroll",
                                                                 component:
-                                                                undefined,
+                                                                    undefined,
                                                                 dropdownClassName:
-                                                                undefined,
+                                                                    undefined,
                                                                 options: [
                                                                     "center",
                                                                     "right",
@@ -389,16 +414,16 @@ export default function Table({ auth, categories }) {
 
                                                             image: {
                                                                 className:
-                                                                undefined,
+                                                                    undefined,
                                                                 component:
-                                                                undefined,
+                                                                    undefined,
                                                                 popupClassName:
-                                                                undefined,
+                                                                    undefined,
                                                                 urlEnabled: true,
                                                                 uploadEnabled: true,
                                                                 alignmentEnabled: true,
                                                                 uploadCallback:
-                                                                undefined,
+                                                                    undefined,
                                                                 previewImage: true,
                                                                 inputAccept:
                                                                     "image/gif,image/webp,image/jpeg,image/jpg,image/png,image/svg",
@@ -422,8 +447,7 @@ export default function Table({ auth, categories }) {
                                             </div>
                                             <div className="sm:col-span-4 hidden">
                                                 <div className="mt-2">
-                                                    <div
-                                                        className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
                                                             type="text"
                                                             value={
@@ -446,15 +470,14 @@ export default function Table({ auth, categories }) {
                                 </div>
 
                                 <div className="mt-6 flex items-center justify-end gap-x-6">
-                                    <button
-                                        type="button"
-                                        className="text-sm font-semibold leading-6 text-gray-900"
-                                    ></button>
+                                    <NavLink href={route("post.index")}>
+                                        Geri dön
+                                    </NavLink>
                                     <button
                                         type="submit"
                                         className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                                     >
-                                        Save
+                                        Ekle
                                     </button>
                                 </div>
                             </form>
@@ -463,41 +486,77 @@ export default function Table({ auth, categories }) {
                 </div>
                 <div className="ma-w-5xl mx-end px-6">
                     <div className="bg-white shadow-sm sm:rounded-lg p-6">
-                    <div
-                        className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                        <div className="text-center">
-                            <ImageUp
-                                className="mx-auto h-12 w-12 text-gray-300"
-                                aria-hidden="true"
-                            />
-                            <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                <label
-                                    htmlFor="file-upload"
-                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                >
-                                                                <span>
-                                                                 Ön görünüş fotoğraf yükle <br/>   PNG, JPG, GIF, WEBP ve
-                                                            8MB kadar
-                                                                </span>
-                                    <input
-                                        onChange={(e) =>
-                                            setData(
-                                                "image",
-                                                e.target
-                                                    .files[0],
-                                            )
-                                        }
-                                        id="file-upload"
-                                        name="file-upload"
-                                        type="file"
-                                        className="sr-only"
+                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 w-[400px] max-lg:w-full">
+                            <div className="text-center">
+                                {previewUrl && (
+                                    <span className="text-gray-500">
+                                        {" "}
+                                       <span className="font-bold">Boyut</span>: {imageSize.width} x{" "}
+                                        {imageSize.height} pixels
+                                        <br />
+                                       <span className="font-bold"> metin alt:{" "}</span>
+                                        <input
+                                            type="text"
+                                            placeholder="eklemeyi unutma"
+                                            className="border-none placeholder:text-gray-400 focus:border-none focus:rind-0 ring-0 ring-white focus:ring-white p-0 my-2"
+                                            value={data.image_alt}
+                                            onChange={e => setData({...data,image_alt: e.target.value})}
+                                        />
+                                    </span>
+                                )}
+                                {previewUrl ? (
+                                    previewUrl &&
+                                    !isLoading && (
+                                        <img
+                                            src={previewUrl}
+                                            alt=""
+                                            className="max-w-xs rounded-lg shadow-md hover:skew-x-3 hover:shadow-xl transition-custom"
+                                        />
+                                    )
+                                ) : (
+                                    <ImageUp
+                                        className="mx-auto h-12 w-12 text-gray-300"
+                                        aria-hidden="true"
                                     />
-                                </label>
+                                )}
+
+                                <div className="mt-4 flex text-sm leading-6 text-gray-600 flex flex-col justify-center items-center mx-auto">
+                                    <label
+                                        htmlFor="file-upload"
+                                        className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                    >
+                                        <input
+                                            onChange={handleChangeImage}
+                                            id="file-upload"
+                                            name="file-upload"
+                                            type="file"
+                                            className="sr-only"
+                                        />
+                                        {errors.image && (
+                                            <p className="text-red-500 text-xs mt-1">
+                                                {errors.image}
+                                            </p>
+                                        )}
+                                        <div className="">
+                                            {isLoading ? (
+                                                <div className="">
+                                                    Yükleniyor...
+                                                </div>
+                                            ) : (
+                                                <span>
+                                                    {previewUrl
+                                                        ? `  Fotoğraf Değiştirebilirsiniz`
+                                                        : " Ön görünüş fotoğraf yükle "}
+                                                    <br /> PNG, JPG, GIF, WEBP
+                                                    ve 8MB kadar
+                                                </span>
+                                            )}
+                                        </div>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    </div>
-
                 </div>
             </div>
         </AuthenticatedLayout>
