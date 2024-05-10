@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { Head, useForm } from "@inertiajs/react";
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { convertToRaw, EditorState } from "draft-js";
@@ -8,8 +8,21 @@ import draftToHtml from "draftjs-to-html";
 import slugify from "slugify";
 import { ImageUp } from "lucide-react";
 import NavLink from "@/Components/NavLink.jsx";
+import CropImage from "@/Pages/Post/CreateTable/CropImage.jsx";
+import ReactCrop from 'react-image-crop'
 
-export default function Table({ auth, categories }) {
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/Components/ui/dialog"
+import {Toaster} from "react-hot-toast";
+
+
+export default function Table({ auth, categories,newDD}) {
     const { data, setData, post, errors } = useForm({
         title: "",
         slug: "",
@@ -121,6 +134,104 @@ export default function Table({ auth, categories }) {
                                 <div className="space-y-12">
                                     <div className="pb-12">
                                         <div className="mt-0 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                                            <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 w-[400px] max-lg:w-full">
+                                                <div className="text-center">
+                                                    {/*{previewUrl && (*/}
+                                                    {/*    <span className="text-gray-500">*/}
+                                                    {/*        {" "}*/}
+                                                    {/*        <span className="font-bold">Boyut</span>*/}
+                                                    {/*        : {imageSize.width} x {imageSize.height}{" "}*/}
+                                                    {/*        pixels*/}
+                                                    {/*        <br />*/}
+                                                    {/*        <span className="font-bold">*/}
+                                                    {/*            {" "}*/}
+                                                    {/*            metin alt:{" "}*/}
+                                                    {/*        </span>*/}
+                                                    {/*        <input*/}
+                                                    {/*            type="text"*/}
+                                                    {/*            placeholder="eklemeyi unutma"*/}
+                                                    {/*            className="border-none placeholder:text-gray-400 focus:border-none focus:rind-0 ring-0 ring-white focus:ring-white p-0 my-2"*/}
+                                                    {/*            value={data.image_alt}*/}
+                                                    {/*            onChange={(e) =>*/}
+                                                    {/*                setData({*/}
+                                                    {/*                    ...data,*/}
+                                                    {/*                    image_alt: e.target.value,*/}
+                                                    {/*                })*/}
+                                                    {/*            }*/}
+                                                    {/*        />*/}
+                                                    {/*    </span>*/}
+                                                    {/*)}*/}
+                                                    {/*{previewUrl ? (*/}
+                                                    {/*    previewUrl &&*/}
+                                                    {/*    !isLoading && (*/}
+                                                    {/*        <img*/}
+                                                    {/*            src={previewUrl}*/}
+                                                    {/*            alt=""*/}
+                                                    {/*            className="max-w-xs rounded-lg shadow-md hover:skew-x-3 hover:shadow-xl transition-custom"*/}
+                                                    {/*        />*/}
+                                                    {/*    )*/}
+                                                    {/*) : (*/}
+                                                    {/*    <ImageUp*/}
+                                                    {/*        className="mx-auto h-12 w-12 text-gray-300"*/}
+                                                    {/*        aria-hidden="true"*/}
+                                                    {/*    />*/}
+                                                    {/*)}*/}
+                                                    <img
+                                                        src={newDD}
+                                                        alt="Cropped"
+                                                    />
+
+                                                    <div className="mt-4 text-sm leading-6 text-gray-600 flex flex-col justify-center items-center mx-auto">
+                                                        <Dialog>
+                                                            <DialogTrigger>
+                                                                <label
+                                                                    htmlFor="file-upload"
+                                                                    className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                                                >
+                                                                    <div className="">
+                                                                        {isLoading ? (
+                                                                            <div className="">
+                                                                                Yükleniyor...
+                                                                            </div>
+                                                                        ) : (
+                                                                            <span>
+                                                                                {previewUrl
+                                                                                    ? `  Fotoğraf Değiştirebilirsiniz`
+                                                                                    : " Ön görünüş fotoğraf yükle "}
+                                                                                <br />{" "}
+                                                                                PNG,
+                                                                                JPG,
+                                                                                GIF,
+                                                                                WEBP
+                                                                                ve
+                                                                                8MB
+                                                                                kadar
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </label>
+                                                            </DialogTrigger>
+                                                            <DialogContent className="max-w-max h-fit">
+                                                                <DialogHeader>
+                                                                    <DialogTitle>
+                                                                        Alt
+                                                                        metin:
+                                                                        <input
+                                                                            type="text"
+                                                                            className="border-none focus:border-white focus:ring-0"
+                                                                            placeholder="yazmayı unutma"
+                                                                        />
+                                                                    </DialogTitle>
+                                                                    <DialogDescription>
+                                                                        <CropImage />
+                                                                    </DialogDescription>
+                                                                </DialogHeader>
+                                                            </DialogContent>
+                                                        </Dialog>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div className="sm:col-span-full">
                                                 <label
                                                     htmlFor="username"
@@ -128,6 +239,7 @@ export default function Table({ auth, categories }) {
                                                 >
                                                     Başlık Ekle
                                                 </label>
+
                                                 <div className="mt-2">
                                                     <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                                         <input
@@ -485,80 +597,10 @@ export default function Table({ auth, categories }) {
                     </div>
                 </div>
                 <div className="ma-w-5xl mx-end px-6">
-                    <div className="bg-white shadow-sm sm:rounded-lg p-6">
-                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 w-[400px] max-lg:w-full">
-                            <div className="text-center">
-                                {previewUrl && (
-                                    <span className="text-gray-500">
-                                        {" "}
-                                       <span className="font-bold">Boyut</span>: {imageSize.width} x{" "}
-                                        {imageSize.height} pixels
-                                        <br />
-                                       <span className="font-bold"> metin alt:{" "}</span>
-                                        <input
-                                            type="text"
-                                            placeholder="eklemeyi unutma"
-                                            className="border-none placeholder:text-gray-400 focus:border-none focus:rind-0 ring-0 ring-white focus:ring-white p-0 my-2"
-                                            value={data.image_alt}
-                                            onChange={e => setData({...data,image_alt: e.target.value})}
-                                        />
-                                    </span>
-                                )}
-                                {previewUrl ? (
-                                    previewUrl &&
-                                    !isLoading && (
-                                        <img
-                                            src={previewUrl}
-                                            alt=""
-                                            className="max-w-xs rounded-lg shadow-md hover:skew-x-3 hover:shadow-xl transition-custom"
-                                        />
-                                    )
-                                ) : (
-                                    <ImageUp
-                                        className="mx-auto h-12 w-12 text-gray-300"
-                                        aria-hidden="true"
-                                    />
-                                )}
-
-                                <div className="mt-4 flex text-sm leading-6 text-gray-600 flex flex-col justify-center items-center mx-auto">
-                                    <label
-                                        htmlFor="file-upload"
-                                        className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                    >
-                                        <input
-                                            onChange={handleChangeImage}
-                                            id="file-upload"
-                                            name="file-upload"
-                                            type="file"
-                                            className="sr-only"
-                                        />
-                                        {errors.image && (
-                                            <p className="text-red-500 text-xs mt-1">
-                                                {errors.image}
-                                            </p>
-                                        )}
-                                        <div className="">
-                                            {isLoading ? (
-                                                <div className="">
-                                                    Yükleniyor...
-                                                </div>
-                                            ) : (
-                                                <span>
-                                                    {previewUrl
-                                                        ? `  Fotoğraf Değiştirebilirsiniz`
-                                                        : " Ön görünüş fotoğraf yükle "}
-                                                    <br /> PNG, JPG, GIF, WEBP
-                                                    ve 8MB kadar
-                                                </span>
-                                            )}
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <div className="bg-white shadow-sm sm:rounded-lg p-6"></div>
                 </div>
             </div>
+            <Toaster />
         </AuthenticatedLayout>
     );
 }

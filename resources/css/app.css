@@ -208,3 +208,7 @@ input[type=number] {
     color: #1a73e8;
     text-decoration: underline;
 }
+.rdw-text-align-dropdown {
+    width: 50px;
+    z-index: 2!important;
+}
