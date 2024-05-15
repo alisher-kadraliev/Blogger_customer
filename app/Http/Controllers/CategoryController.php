@@ -11,16 +11,18 @@ class CategoryController extends Controller
     public function index()
     {
         $search = request()->input('search');
-        $query = Category::query();
-        if($search){
+        $query = Category::query()->orderBy('created_at', 'desc');
+        if ($search) {
             $query->where('name', 'like', '%' . $search . '%');
         }
-        $categories = $query->get();
+        $categories = $query->paginate(5)->onEachSide(1);
 
-        return Inertia::render('Category/Index',[
+
+        return Inertia::render('Category/Index', [
             'categories' => $categories
         ]);
     }
+
     public function store(Request $request)
     {
         Category::create($request->validate([

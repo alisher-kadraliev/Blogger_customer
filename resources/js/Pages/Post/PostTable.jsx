@@ -1150,13 +1150,12 @@ const PostTable = ({
                             </span>
                         </div>
                     )}
-                    <Paginate links={posts.links} />
+
                 </TabsContent>
                 <TabsContent value="trashed">
                     <TrashedPosts trashedPosts={trashedPosts} />
                 </TabsContent>
             </Tabs>
-            <Toaster />
         </React.Fragment>
     );
 };

@@ -12,7 +12,7 @@ import setCanvasPreview from "@/Pages/Post/CreateTable/setCanvasPreview.js";
 const MIN_DIMENSION = 150;
 const ASPECT_RATIO = 16 / 9;
 
-export default function CropImage({ Toaster,newDD }) {
+export default function CropImage({ Toaster,updateAvatar }) {
     const [imgSrc, setImgSrc] = useState("");
     const [crop, setCrop] = useState();
     const [errorImg, setErrorImage] = useState("");
@@ -65,9 +65,7 @@ export default function CropImage({ Toaster,newDD }) {
             return;
         }
         const dataUrl = previewCanvasRef.current.toDataURL();
-        setCroppedImageUrl(dataUrl); // Update the state with the new cropped image URL
-        newDD = dataUrl
-        console.log(newDD)
+        updateAvatar(dataUrl)
     }
 
 
@@ -137,7 +135,6 @@ export default function CropImage({ Toaster,newDD }) {
                     Foto Kırpmak
                 </PrimaryButton>
             )}
-            <img src={croppedImageUrl} alt="Cropped"/>
         </div>
     );
 }

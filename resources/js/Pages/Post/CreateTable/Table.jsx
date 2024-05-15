@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { Head, useForm } from "@inertiajs/react";
-import React, {useRef, useState} from "react";
+import React, { useRef, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { convertToRaw, EditorState } from "draft-js";
@@ -9,20 +9,19 @@ import slugify from "slugify";
 import { ImageUp } from "lucide-react";
 import NavLink from "@/Components/NavLink.jsx";
 import CropImage from "@/Pages/Post/CreateTable/CropImage.jsx";
-import ReactCrop from 'react-image-crop'
+import ReactCrop from "react-image-crop";
 
 import {
-    Dialog,
+    Dialog, DialogClose,
     DialogContent,
     DialogDescription,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/Components/ui/dialog"
-import {Toaster} from "react-hot-toast";
+} from "@/Components/ui/dialog";
+import toast, { Toaster } from "react-hot-toast";
 
-
-export default function Table({ auth, categories,newDD}) {
+export default function Table({ auth, categories }) {
     const { data, setData, post, errors } = useForm({
         title: "",
         slug: "",
@@ -35,8 +34,10 @@ export default function Table({ auth, categories,newDD}) {
         image_alt: "",
         author_id: auth.user.id,
     });
+    // console.log(updateAvatar)
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [isFocused, setIsFocused] = useState(false); // Track focus
+    const [closeModal, setCloseModal] = useState(false); // Track focus
     const [contentLength, setContentLength] = useState(0); // Track content length
     const [readingTime, setReadingTime] = useState(0);
     const [image, setImage] = useState(null);
@@ -44,7 +45,7 @@ export default function Table({ auth, categories,newDD}) {
     const [isLoading, setIsLoading] = useState(false);
     const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 
-    const handleChangeImage = (e,image) => {
+    const handleChangeImage = (e, image) => {
         const file = e.target.files[0];
         if (file) {
             setIsLoading(true);
@@ -59,7 +60,7 @@ export default function Table({ auth, categories,newDD}) {
                     // Load the image to get its size
                     const img = new Image();
                     img.onload = () => {
-                        setImageSize({ width: img.width, height: img.height});
+                        setImageSize({ width: img.width, height: img.height });
                     };
                     img.src = reader.result;
                 }, 1000);
@@ -111,7 +112,16 @@ export default function Table({ auth, categories,newDD}) {
         });
         setData((data) => ({ ...data, title: newTitle, slug: newSlug }));
     };
-
+    const imgUrl = useRef("");
+    const updateAvatar = (imgSrc) => {
+        try {
+            imgUrl.current = imgSrc;
+            toast.success('Başarılı Eklendi')
+            setCloseModal(false)
+        } catch (error) {
+            toast.error("hata");
+        }
+    };
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -133,8 +143,8 @@ export default function Table({ auth, categories,newDD}) {
                             >
                                 <div className="space-y-12">
                                     <div className="pb-12">
-                                        <div className="mt-0 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                                            <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10 w-[400px] max-lg:w-full">
+                                        <div className="mt-0 grid grid-cols-1 gap-x-6 gap-y-8">
+                                            <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-2 py-3 w-full max-lg:w-full">
                                                 <div className="text-center">
                                                     {/*{previewUrl && (*/}
                                                     {/*    <span className="text-gray-500">*/}
@@ -176,18 +186,23 @@ export default function Table({ auth, categories,newDD}) {
                                                     {/*        aria-hidden="true"*/}
                                                     {/*    />*/}
                                                     {/*)}*/}
-                                                    <img
-                                                        src={newDD}
-                                                        alt="Cropped"
-                                                    />
+                                                    {/*<img*/}
+                                                    {/*    src={}*/}
+                                                    {/*/>*/}
+                                                    {/*<div>{croppedImageUrl || 'no image'}</div>*/}
 
                                                     <div className="mt-4 text-sm leading-6 text-gray-600 flex flex-col justify-center items-center mx-auto">
                                                         <Dialog>
-                                                            <DialogTrigger>
+                                                            <DialogTrigger onClick={e => setCloseModal(true)}>
                                                                 <label
                                                                     htmlFor="file-upload"
                                                                     className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
                                                                 >
+                                                                    <img
+                                                                        src={
+                                                                            imgUrl.current
+                                                                        }
+                                                                    />
                                                                     <div className="">
                                                                         {isLoading ? (
                                                                             <div className="">
@@ -211,6 +226,7 @@ export default function Table({ auth, categories,newDD}) {
                                                                     </div>
                                                                 </label>
                                                             </DialogTrigger>
+                                                            {closeModal && (
                                                             <DialogContent className="max-w-max h-fit">
                                                                 <DialogHeader>
                                                                     <DialogTitle>
@@ -223,10 +239,15 @@ export default function Table({ auth, categories,newDD}) {
                                                                         />
                                                                     </DialogTitle>
                                                                     <DialogDescription>
-                                                                        <CropImage />
+                                                                        <CropImage
+                                                                            updateAvatar={
+                                                                                updateAvatar
+                                                                            }
+                                                                        />
                                                                     </DialogDescription>
                                                                 </DialogHeader>
                                                             </DialogContent>
+                                                            )}
                                                         </Dialog>
                                                     </div>
                                                 </div>
@@ -282,7 +303,7 @@ export default function Table({ auth, categories,newDD}) {
                                                 )}
                                             </div>
 
-                                            <div className="sm:col-span-full">
+                                            <div className="sm:col-span-full mt-10">
                                                 <label className="block text-md font-bold leading-6 text-gray-900">
                                                     Meta Title
                                                 </label>

@@ -75,6 +75,9 @@
         @apply bg-background text-foreground;
         font-family: "Inter-Regular", sans-serif!important;
     }
+    ::-webkit-scrollbar {
+        width: 0px;
+    }
     .h1{
         font-family: 'Quincy-Italic', sans-serif!important;
 
@@ -211,4 +214,8 @@ input[type=number] {
 .rdw-text-align-dropdown {
     width: 50px;
     z-index: 2!important;
+}
+
+.layout-transition{
+    transform: translate(120px, 50%);
 }

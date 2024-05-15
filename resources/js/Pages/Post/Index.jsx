@@ -1,9 +1,19 @@
 import React from "react";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import Table from "@/Pages/Post/PostTable.jsx";
 
 import { useTranslation } from "react-i18next";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/Components/ui/breadcrumb";
+import { motion } from "framer-motion";
+import Paginate from "@/Pages/Post/Paginate.jsx";
 
 const Index = ({
     auth,
@@ -25,10 +35,34 @@ const Index = ({
         >
             <Head title="Dashboard" />
 
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/components">
+                            Components
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
+
+
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
+                <div className="max-w-7xl bg-white shadow-sm sm:rounded-lg mx-auto sm:p-6 lg:p-8">
+                    <div className="overflow-hidden">
+                        <motion.div
+                            initial={{ y: "100vw", opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ duration: 0.75 }}
+                            className="motion-div p-6 text-gray-900 bg-white"
+                        >
                             <Table
                                 totalPost={totalPost}
                                 posts={posts}
@@ -36,8 +70,9 @@ const Index = ({
                                 categories={categories}
                                 trashedPosts={trashedPosts}
                             />
-                        </div>
+                        </motion.div>
                     </div>
+                    <Paginate links={posts.links} />
                 </div>
             </div>
         </AuthenticatedLayout>

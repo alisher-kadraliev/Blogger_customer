@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Head, Link, router, useForm } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import { Textarea } from "@/Components/ui/textarea";
-
+import { motion } from "framer-motion";
 import {
     Table,
     TableBody,
@@ -26,6 +26,15 @@ import SecondaryButton from "@/Components/SecondaryButton.jsx";
 import Modal from "@/Components/Modal.jsx";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import slugify from "slugify";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/Components/ui/breadcrumb.jsx";
+import Paginate from "@/Pages/Post/Paginate.jsx";
 
 const TableShow = ({ categories, auth }) => {
     const { t } = useTranslation();
@@ -98,12 +107,33 @@ const TableShow = ({ categories, auth }) => {
                 </h2>
             }
         >
-            <Head title="Kategoriler" />
-
+            <Head title="Kategoriler"/>
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator/>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink href="/components">
+                            Components
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator/>
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
             <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">
+                <div className="max-w-7xl mx-auto bg-white shadow-sm sm:rounded-lg sm:p-6 lg:p-8">
+                    <div className="overflow-hidden">
+                        <motion.div
+                            initial={{y: "100vw", opacity: 0}}
+                            animate={{y: 0, opacity: 1}}
+                            transition={{duration: 0.75}}
+                            className="motion-div p-6 bg-white text-gray-900"
+                        >
                             <div className="flex flex-row justify-between max-lg:flex-col gap-3 my-5">
                                 <div className="flex flex-row justify-center max-lg:flex-col">
                                     <TextInput
@@ -117,7 +147,7 @@ const TableShow = ({ categories, auth }) => {
                                             className="mx-2"
                                             onClick={handleReset}
                                         >
-                                            <X size={19} className="mr-2" />{" "}
+                                            <X size={19} className="mr-2"/>{" "}
                                             <span>sıfırla</span>
                                         </SecondaryButton>
                                     )}
@@ -128,6 +158,7 @@ const TableShow = ({ categories, auth }) => {
                                     Yeni Kategori Ekle
                                 </PrimaryButton>
                             </div>
+
                             <Modal show={openModal} onClose={closeModal}>
                                 <form
                                     className="p-6"
@@ -136,7 +167,8 @@ const TableShow = ({ categories, auth }) => {
                                     <label className="block text-sm font-medium leading-6 text-gray-900">
                                         Başlık Ekle
                                     </label>
-                                    <div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                    <div
+                                        className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                         <input
                                             type="text"
                                             value={data.name}
@@ -153,7 +185,8 @@ const TableShow = ({ categories, auth }) => {
                                     <label className="block text-sm mt-5 font-medium leading-6 text-gray-900">
                                         Slug Ekle
                                     </label>
-                                    <div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                    <div
+                                        className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                         <input
                                             type="text"
                                             value={data.slug}
@@ -172,7 +205,8 @@ const TableShow = ({ categories, auth }) => {
                                     <label className="block text-sm mt-5 font-medium leading-6 text-gray-900">
                                         Tanım Ekle (Isteğe bağlı)
                                     </label>
-                                    <div className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
+                                    <div
+                                        className="flex mt-2 rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600">
                                         <Textarea
                                             className="focus:border-none"
                                             value={data.description}
@@ -200,7 +234,7 @@ const TableShow = ({ categories, auth }) => {
                                     </div>
                                 </form>
                             </Modal>
-                            {categories.length > 0 ? (
+                            {categories.data.length > 0 ? (
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
@@ -214,7 +248,7 @@ const TableShow = ({ categories, auth }) => {
                                     </TableHeader>
 
                                     <TableBody>
-                                        {categories.map((item, index) => (
+                                        {categories.data.map((item, index) => (
                                             <TableRow key={index}>
                                                 <TableCell>
                                                     {item.name}
@@ -232,7 +266,7 @@ const TableShow = ({ categories, auth }) => {
                                                 <TableCell className="text-right">
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger>
-                                                            <EllipsisVertical />
+                                                            <EllipsisVertical/>
                                                         </DropdownMenuTrigger>
                                                         <DropdownMenuContent>
                                                             <DropdownMenuItem
@@ -276,11 +310,11 @@ const TableShow = ({ categories, auth }) => {
                                     </span>
                                 </div>
                             )}
-                        </div>
+                        </motion.div>
                     </div>
+                    <Paginate links={categories.links}/>
                 </div>
             </div>
-            <Toaster />
         </AuthenticatedLayout>
     );
 };
