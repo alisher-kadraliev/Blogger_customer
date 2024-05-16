@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import React, { useRef, useState } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -9,17 +9,24 @@ import slugify from "slugify";
 import { ImageUp } from "lucide-react";
 import NavLink from "@/Components/NavLink.jsx";
 import CropImage from "@/Pages/Post/CreateTable/CropImage.jsx";
-import ReactCrop from "react-image-crop";
 
 import {
-    Dialog, DialogClose,
+    Dialog,
     DialogContent,
     DialogDescription,
     DialogHeader,
-    DialogTitle,
     DialogTrigger,
 } from "@/Components/ui/dialog";
 import toast, { Toaster } from "react-hot-toast";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/Components/ui/breadcrumb.jsx";
+import { motion } from "framer-motion";
 
 export default function Table({ auth, categories }) {
     const { data, setData, post, errors } = useForm({
@@ -34,40 +41,14 @@ export default function Table({ auth, categories }) {
         image_alt: "",
         author_id: auth.user.id,
     });
-    // console.log(updateAvatar)
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
     const [isFocused, setIsFocused] = useState(false); // Track focus
     const [closeModal, setCloseModal] = useState(false); // Track focus
     const [contentLength, setContentLength] = useState(0); // Track content length
     const [readingTime, setReadingTime] = useState(0);
-    const [image, setImage] = useState(null);
+
     const [previewUrl, setPreviewUrl] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
-
-    const handleChangeImage = (e, image) => {
-        const file = e.target.files[0];
-        if (file) {
-            setIsLoading(true);
-            setImage(file);
-            setData("image", file);
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setTimeout(() => {
-                    setPreviewUrl(reader.result);
-                    setIsLoading(false);
-
-                    // Load the image to get its size
-                    const img = new Image();
-                    img.onload = () => {
-                        setImageSize({ width: img.width, height: img.height });
-                    };
-                    img.src = reader.result;
-                }, 1000);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
 
     const onEditorStateChange = (editorState) => {
         setEditorState(editorState);
@@ -116,8 +97,9 @@ export default function Table({ auth, categories }) {
     const updateAvatar = (imgSrc) => {
         try {
             imgUrl.current = imgSrc;
-            toast.success('Başarılı Eklendi')
-            setCloseModal(false)
+            toast.success("Başarılı Eklendi");
+            setCloseModal(false);
+            setPreviewUrl(imgSrc);
         } catch (error) {
             toast.error("hata");
         }
@@ -132,9 +114,41 @@ export default function Table({ auth, categories }) {
             }
         >
             <Head title="Yeni post yaz" />
+            <Breadcrumb>
+                <BreadcrumbList>
+                    <BreadcrumbItem>
+                        <BreadcrumbLink>
+                            <Link href={route("dashboard")}>Panel</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbLink>
+                            <Link href={route("post.index")}> Postlar</Link>
+                        </BreadcrumbLink>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                        <BreadcrumbPage>
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.75 }}
+                            >
+                                Yeni Post Ekle - {data.title}
+                            </motion.div>
+                        </BreadcrumbPage>
+                    </BreadcrumbItem>
+                </BreadcrumbList>
+            </Breadcrumb>
             <div className="py-12 flex flex-row max-lg:flex-col gap-10 justify-between">
-                <div className="max-w-5xl mx-start sm:px-6 lg:px-8">
-                    <div className="bg-white shadow-sm sm:rounded-lg">
+                <div className="max-w-5xl mx-start sm:px-6 lg:px-8 bg-white shadow-sm  sm:rounded-lg">
+                    <motion.div
+                        className="bg-white"
+                        initial={{ y: "100vw", opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ duration: 0.75 }}
+                    >
                         <div className="p-6 text-gray-900">
                             <form
                                 onSubmit={handleSubmitForm}
@@ -145,75 +159,82 @@ export default function Table({ auth, categories }) {
                                     <div className="pb-12">
                                         <div className="mt-0 grid grid-cols-1 gap-x-6 gap-y-8">
                                             <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-2 py-3 w-full max-lg:w-full">
-                                                <div className="text-center">
-                                                    {/*{previewUrl && (*/}
-                                                    {/*    <span className="text-gray-500">*/}
-                                                    {/*        {" "}*/}
-                                                    {/*        <span className="font-bold">Boyut</span>*/}
-                                                    {/*        : {imageSize.width} x {imageSize.height}{" "}*/}
-                                                    {/*        pixels*/}
-                                                    {/*        <br />*/}
-                                                    {/*        <span className="font-bold">*/}
-                                                    {/*            {" "}*/}
-                                                    {/*            metin alt:{" "}*/}
-                                                    {/*        </span>*/}
-                                                    {/*        <input*/}
-                                                    {/*            type="text"*/}
-                                                    {/*            placeholder="eklemeyi unutma"*/}
-                                                    {/*            className="border-none placeholder:text-gray-400 focus:border-none focus:rind-0 ring-0 ring-white focus:ring-white p-0 my-2"*/}
-                                                    {/*            value={data.image_alt}*/}
-                                                    {/*            onChange={(e) =>*/}
-                                                    {/*                setData({*/}
-                                                    {/*                    ...data,*/}
-                                                    {/*                    image_alt: e.target.value,*/}
-                                                    {/*                })*/}
-                                                    {/*            }*/}
-                                                    {/*        />*/}
-                                                    {/*    </span>*/}
-                                                    {/*)}*/}
-                                                    {/*{previewUrl ? (*/}
-                                                    {/*    previewUrl &&*/}
-                                                    {/*    !isLoading && (*/}
-                                                    {/*        <img*/}
-                                                    {/*            src={previewUrl}*/}
-                                                    {/*            alt=""*/}
-                                                    {/*            className="max-w-xs rounded-lg shadow-md hover:skew-x-3 hover:shadow-xl transition-custom"*/}
-                                                    {/*        />*/}
-                                                    {/*    )*/}
-                                                    {/*) : (*/}
-                                                    {/*    <ImageUp*/}
-                                                    {/*        className="mx-auto h-12 w-12 text-gray-300"*/}
-                                                    {/*        aria-hidden="true"*/}
-                                                    {/*    />*/}
-                                                    {/*)}*/}
-                                                    {/*<img*/}
-                                                    {/*    src={}*/}
-                                                    {/*/>*/}
-                                                    {/*<div>{croppedImageUrl || 'no image'}</div>*/}
+                                                <div className="">
+                                                    {previewUrl && (
+                                                        <span className="text-gray-500">
+                                                            <span className="font-bold">
+                                                                {" "}
+                                                                metin alt:{" "}
+                                                            </span>
+                                                            <input
+                                                                type="text"
+                                                                placeholder="eklemeyi unutma"
+                                                                className="border-none placeholder:text-gray-400 focus:border-none focus:rind-0 ring-0 ring-white focus:ring-white p-0 my-2"
+                                                                value={
+                                                                    data.image_alt
+                                                                }
+                                                                onChange={(e) =>
+                                                                    setData({
+                                                                        ...data,
+                                                                        image_alt:
+                                                                            e
+                                                                                .target
+                                                                                .value,
+                                                                    })
+                                                                }
+                                                            />
+                                                        </span>
+                                                    )}
+                                                    {previewUrl ? (
+                                                        previewUrl &&
+                                                        !isLoading && (
+                                                            <img
+                                                                src={
+                                                                    imgUrl.current
+                                                                }
+                                                                alt=""
+                                                                className="max-w-xs shadow-md hover:shadow-xl"
+                                                            />
+                                                        )
+                                                    ) : (
+                                                        <ImageUp
+                                                            className="mx-auto h-12 w-12 text-gray-300"
+                                                            aria-hidden="true"
+                                                        />
+                                                    )}
 
                                                     <div className="mt-4 text-sm leading-6 text-gray-600 flex flex-col justify-center items-center mx-auto">
                                                         <Dialog>
-                                                            <DialogTrigger onClick={e => setCloseModal(true)}>
-                                                                <label
-                                                                    htmlFor="file-upload"
-                                                                    className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                                                                >
-                                                                    <img
-                                                                        src={
-                                                                            imgUrl.current
-                                                                        }
-                                                                    />
-                                                                    <div className="">
-                                                                        {isLoading ? (
-                                                                            <div className="">
-                                                                                Yükleniyor...
-                                                                            </div>
-                                                                        ) : (
+                                                            <DialogTrigger
+                                                                onClick={(e) =>
+                                                                    setCloseModal(
+                                                                        true,
+                                                                    )
+                                                                }
+                                                            >
+                                                                {previewUrl ? (
+                                                                    <label
+                                                                        htmlFor="file-upload"
+                                                                        className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                                                    >
+                                                                        <div className="">
                                                                             <span>
-                                                                                {previewUrl
-                                                                                    ? `  Fotoğraf Değiştirebilirsiniz`
-                                                                                    : " Ön görünüş fotoğraf yükle "}
-                                                                                <br />{" "}
+                                                                                Değiştir
+                                                                            </span>
+                                                                        </div>
+                                                                    </label>
+                                                                ) : (
+                                                                    <label
+                                                                        htmlFor="file-upload"
+                                                                        className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                                                    >
+                                                                        <div className="">
+                                                                            <span>
+                                                                                Ön
+                                                                                görünüş
+                                                                                fotoğraf
+                                                                                yükle
+                                                                                <br />
                                                                                 PNG,
                                                                                 JPG,
                                                                                 GIF,
@@ -222,31 +243,22 @@ export default function Table({ auth, categories }) {
                                                                                 8MB
                                                                                 kadar
                                                                             </span>
-                                                                        )}
-                                                                    </div>
-                                                                </label>
+                                                                        </div>
+                                                                    </label>
+                                                                )}
                                                             </DialogTrigger>
                                                             {closeModal && (
-                                                            <DialogContent className="max-w-max h-fit">
-                                                                <DialogHeader>
-                                                                    <DialogTitle>
-                                                                        Alt
-                                                                        metin:
-                                                                        <input
-                                                                            type="text"
-                                                                            className="border-none focus:border-white focus:ring-0"
-                                                                            placeholder="yazmayı unutma"
-                                                                        />
-                                                                    </DialogTitle>
-                                                                    <DialogDescription>
-                                                                        <CropImage
-                                                                            updateAvatar={
-                                                                                updateAvatar
-                                                                            }
-                                                                        />
-                                                                    </DialogDescription>
-                                                                </DialogHeader>
-                                                            </DialogContent>
+                                                                <DialogContent className="max-w-max h-fit">
+                                                                    <DialogHeader>
+                                                                        <DialogDescription>
+                                                                            <CropImage
+                                                                                updateAvatar={
+                                                                                    updateAvatar
+                                                                                }
+                                                                            />
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                </DialogContent>
                                                             )}
                                                         </Dialog>
                                                     </div>
@@ -267,6 +279,7 @@ export default function Table({ auth, categories }) {
                                                             type="text"
                                                             id="username"
                                                             value={data.title}
+                                                            autoComplete={'off'}
                                                             onChange={
                                                                 handleChangeName
                                                             }
@@ -331,7 +344,7 @@ export default function Table({ auth, categories }) {
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="sm:col-span-full border-b border-gray-900/10 pb-5">
+                                            <div className="sm:col-span-full">
                                                 <label className="block text-md font-bold leading-6 text-gray-900">
                                                     Meta Description
                                                 </label>
@@ -361,7 +374,7 @@ export default function Table({ auth, categories }) {
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="sm:col-span-full">
+                                            <div className="sm:col-span-full border-b border-gray-900/10 pb-5">
                                                 <label className="block text-md font-bold leading-6 text-gray-900">
                                                     Kısa Açıklama (ön kısa yazı
                                                     ona tıklaması için)
@@ -390,7 +403,7 @@ export default function Table({ auth, categories }) {
                                                     )}
                                                 </div>
                                             </div>
-                                            <div className="sm:col-span-full">
+                                            <div className="sm:col-span-full mt-10">
                                                 <label className="block text-md font-bold leading-6 text-gray-900">
                                                     Kategori Seç
                                                 </label>
@@ -458,10 +471,9 @@ export default function Table({ auth, categories }) {
                                                         editorState={
                                                             editorState
                                                         }
-                                                        placeholder="İçerik ekleyin..."
                                                         wrapperClassName="demo-wrapper"
                                                         editorClassName="demo-editor"
-                                                        toolbarClassName={`rdw-editor-toolbar ${isFocused && isContentLarge ? "fixed-toolbar" : ""}`}
+                                                        toolbarClassName={`rdw-editor-toolbar !bg-blue-400 !border !sticky !top-0 z-10 !rounded-sm !border-blue-900 ${isFocused && isContentLarge ? "fixed-toolbar " : ""}`}
                                                         onEditorStateChange={
                                                             onEditorStateChange
                                                         }
@@ -615,7 +627,7 @@ export default function Table({ auth, categories }) {
                                 </div>
                             </form>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
                 <div className="ma-w-5xl mx-end px-6">
                     <div className="bg-white shadow-sm sm:rounded-lg p-6"></div>

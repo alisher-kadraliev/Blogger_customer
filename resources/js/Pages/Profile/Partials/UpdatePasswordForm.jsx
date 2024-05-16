@@ -39,16 +39,14 @@ export default function UpdatePasswordForm({ className = '' }) {
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Update Password</h2>
+                <h2 className="text-lg font-medium text-gray-900">Şifre Güncelle</h2>
 
-                <p className="mt-1 text-sm text-gray-600">
-                    Ensure your account is using a long, random password to stay secure.
-                </p>
+                <p className="mt-1 text-sm text-gray-600">Güvenliğinizi korumak için hesabınızın uzun ve rastgele bir şifre kullandığından emin olun.</p>
             </header>
 
             <form onSubmit={updatePassword} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="current_password" value="Current Password" />
+                    <InputLabel htmlFor="current_password" value="Mevcut Şifre" />
 
                     <TextInput
                         id="current_password"
@@ -64,7 +62,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="New Password" />
+                    <InputLabel htmlFor="password" value="Yeni Şifre" />
 
                     <TextInput
                         id="password"
@@ -80,7 +78,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
+                    <InputLabel htmlFor="password_confirmation" value="Şifreyi Onayla" />
 
                     <TextInput
                         id="password_confirmation"
@@ -95,7 +93,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>Kaydet</PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}
@@ -104,7 +102,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                         leave="transition ease-in-out"
                         leaveTo="opacity-0"
                     >
-                        <p className="text-sm text-gray-600">Saved.</p>
+                        <p className="text-sm text-gray-600">Başarılı.</p>
                     </Transition>
                 </div>
             </form>

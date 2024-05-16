@@ -1,22 +1,19 @@
 import React, { useRef, useState } from "react";
 import "react-image-crop/dist/ReactCrop.css";
-import ReactCrop, {
-    convertToPixelCrop,
-    makeAspectCrop,
-} from "react-image-crop";
-import { centerCrop } from "react-image-crop";
-import toast, { Toaster } from "react-hot-toast";
+import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
+import toast from "react-hot-toast";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import setCanvasPreview from "@/Pages/Post/CreateTable/setCanvasPreview.js";
+import {useForm} from "@inertiajs/react";
 
 const MIN_DIMENSION = 150;
 const ASPECT_RATIO = 16 / 9;
 
-export default function CropImage({ Toaster,updateAvatar }) {
+export default function CropImage({ Toaster, updateAvatar }) {
     const [imgSrc, setImgSrc] = useState("");
     const [crop, setCrop] = useState();
+    const [image, setImage] = useState(null);
     const [errorImg, setErrorImage] = useState("");
-    const [croppedImageUrl,setCroppedImageUrl] = useState('')
     const imgRef = useRef(null);
     const previewCanvasRef = useRef(null);
     const onSelectFile = (e) => {
@@ -44,30 +41,30 @@ export default function CropImage({ Toaster,updateAvatar }) {
             setImgSrc(imageUrl);
         });
         reader.readAsDataURL(file);
+
     };
 
-    const onImageLoaded = (image) =>{
-        imgRef.current = image
-    }
+    const onImageLoaded = (image) => {
+        imgRef.current = image;
+    };
 
     const onCropComplete = (crop) => {
-        if(imgRef.current && crop.width && crop.height) {
+        if (imgRef.current && crop.width && crop.height) {
             const canvas = previewCanvasRef.current;
-            setCanvasPreview(imgRef.current,canvas,crop)
+            setCanvasPreview(imgRef.current, canvas, crop);
         }
-    }
+    };
     const onCropChange = (crop) => {
-        setCrop(crop)
-    }
+        setCrop(crop);
+    };
 
     const handleSave = () => {
-        if(!previewCanvasRef.current){
+        if (!previewCanvasRef.current) {
             return;
         }
         const dataUrl = previewCanvasRef.current.toDataURL();
-        updateAvatar(dataUrl)
-    }
-
+        updateAvatar(dataUrl);
+    };
 
     const onLoadImg = (e) => {
         const { width, height } = e.currentTarget;
@@ -83,16 +80,20 @@ export default function CropImage({ Toaster,updateAvatar }) {
         const centeredCrop = centerCrop(crop, width, height);
         setCrop(centeredCrop);
     };
-
-
-
+    const { data, setData, post, errors } = useForm({
+    });
     return (
         <div>
-            <input type="file" className="block w-full text-sm text-slate-500
+            <input
+                type="file"
+                className="block w-full text-sm text-slate-500
         file:mr-4 file:py-2 file:px-4 file:rounded-md
         file:border-0 border-white focus:outline-none file:text-sm file:font-semibold
         file:bg-gray-900 file:text-white
-        hover:file:bg-gray-800 mt-4" accept="image/*" onChange={onSelectFile}/>
+        hover:file:bg-gray-800 mt-4"
+                accept="image/*"
+                onChange={onSelectFile}
+            />
             {errorImg && <p className="text-red-500">{errorImg}</p>}
             <div className="flex justify-start py-7 items-center gap-10 max-lg:flex-col">
                 {imgSrc && (
@@ -116,24 +117,18 @@ export default function CropImage({ Toaster,updateAvatar }) {
                 )}
 
                 <div>
-                    {/*{crop && (*/}
-                        <canvas
-                            ref={previewCanvasRef}
-                            style={{
-                                display: "none",
-                                border: "1px solid black",
-                                objectFit: "contain",
-                            }}
-                        ></canvas>
-                    {/*// )}*/}
+                    <canvas
+                        ref={previewCanvasRef}
+                        style={{
+                            display: "none",
+                            border: "1px solid black",
+                            objectFit: "contain",
+                        }}
+                    ></canvas>
                 </div>
             </div>
             {imgSrc && (
-                <PrimaryButton
-                    onClick={handleSave}
-                >
-                    Foto Kırpmak
-                </PrimaryButton>
+                <PrimaryButton onClick={handleSave}>Foto Kırpmak</PrimaryButton>
             )}
         </div>
     );

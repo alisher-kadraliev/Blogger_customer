@@ -111,17 +111,17 @@ const TableShow = ({ categories, auth }) => {
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                        <BreadcrumbLink> <Link href={route('dashboard')}>Panel</Link></BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator/>
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">
-                            Components
-                        </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator/>
-                    <BreadcrumbItem>
-                        <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                        <BreadcrumbPage>
+                            <motion.div
+                                initial={{opacity: 0}}
+                                animate={{ opacity: 1}}
+                                transition={{duration: 0.75}}
+                            >Kategoriler</motion.div>
+                        </BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>

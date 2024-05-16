@@ -1,5 +1,5 @@
 import React from "react";
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.jsx";
 import Table from "@/Pages/Post/PostTable.jsx";
 
@@ -38,21 +38,24 @@ const Index = ({
             <Breadcrumb>
                 <BreadcrumbList>
                     <BreadcrumbItem>
-                        <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href="/components">
-                            Components
+                        <BreadcrumbLink>
+                            <Link href={route("dashboard")}>Panel</Link>
                         </BreadcrumbLink>
                     </BreadcrumbItem>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                        <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                        <BreadcrumbPage>
+                            <motion.div
+                                initial={{opacity: 0 }}
+                                animate={{opacity: 1 }}
+                                transition={{ duration: 0.75 }}
+                            >
+                                Postlar
+                            </motion.div>
+                        </BreadcrumbPage>
                     </BreadcrumbItem>
                 </BreadcrumbList>
             </Breadcrumb>
-
 
             <div className="py-12">
                 <div className="max-w-7xl bg-white shadow-sm sm:rounded-lg mx-auto sm:p-6 lg:p-8">
@@ -70,6 +73,7 @@ const Index = ({
                                 categories={categories}
                                 trashedPosts={trashedPosts}
                             />
+
                         </motion.div>
                     </div>
                     <Paginate links={posts.links} />
