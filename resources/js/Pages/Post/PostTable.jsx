@@ -375,12 +375,11 @@ const PostTable = ({
                                             {item.title}
                                         </TableCell>
                                         <TableCell>
-                                            <a
-                                                href=""
-                                                className="lg:border transition-custom hover:bg-gray-200/40 hover:border-gray-100 py-0.5 px-2.5 rounded-md text-xs lg:border-gray-300 font-semibold lg:bg-gray-100/70"
+                                            <div
+                                                className="bg-gray-100 text-gray-600 rounded-md px-2 py-1 text-sm w-fit"
                                             >
                                                 {item.category.name}
-                                            </a>
+                                            </div>
                                         </TableCell>
                                         <TableCell className="text-sm">
                                             {item.update_status}

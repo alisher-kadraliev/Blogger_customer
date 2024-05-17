@@ -152,16 +152,27 @@ class PostController extends Controller
             'reading_time' => 'nullable|integer',
             'image_alt' => 'nullable|string',
         ]);
+
         if ($request->has('image')) {
         $image = $request->input('image'); // Your base64 encoded image
         $image = str_replace('data:image/png;base64,', '', $image);
-        $image = str_replace('data:image/jpeg;base64,', '', $image); // Fixed this line
+        $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
-        $imageName = uniqid() . '.png';
+        $imageName = uniqid() . '.webp';
         Storage::disk('public')->put('posts/' . $imageName, base64_decode($image));
         $validatedData['image'] = 'posts/' . $imageName;
     }
 
+
+//        if ($request->has('image')) {
+//            $image = $request->input('image'); // Your base64 encoded image
+//            $image = str_replace('data:image/png;base64,', '', $image);
+//            $image = str_replace('data:image/png;base64,', '', $image);
+//            $image = str_replace(' ', '+', $image);
+//            $imageName = uniqid() . '.png';
+//            Storage::disk('public')->put('posts/' . $imageName, base64_decode($image));
+//            $validatedData['image'] = 'posts/' . $imageName;
+//        }
         Post::create($validatedData);
 
         return redirect()->route('post.index');
