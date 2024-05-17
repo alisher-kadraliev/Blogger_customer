@@ -39,6 +39,7 @@ export default function Table({ auth, categories }) {
         category_id: "",
         reading_time: "",
         image_alt: "",
+        image: "",
         author_id: auth.user.id,
     });
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -46,7 +47,6 @@ export default function Table({ auth, categories }) {
     const [closeModal, setCloseModal] = useState(false); // Track focus
     const [contentLength, setContentLength] = useState(0); // Track content length
     const [readingTime, setReadingTime] = useState(0);
-
     const [previewUrl, setPreviewUrl] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -97,12 +97,14 @@ export default function Table({ auth, categories }) {
     const updateAvatar = (imgSrc) => {
         try {
             imgUrl.current = imgSrc;
-            toast.success("Başarılı Eklendi");
-            setCloseModal(false);
             setPreviewUrl(imgSrc);
+            setData((data) => ({ ...data, image: imgSrc }));
         } catch (error) {
             toast.error("hata");
         }
+    };
+    const closeModals = (e) => {
+        setCloseModal(false);
     };
     return (
         <AuthenticatedLayout
@@ -202,7 +204,11 @@ export default function Table({ auth, categories }) {
                                                             aria-hidden="true"
                                                         />
                                                     )}
-
+                                                    {errors.image && (
+                                                        <p className="text-red-500 text-xs mt-1">
+                                                            {errors.image}
+                                                        </p>
+                                                    )}
                                                     <div className="mt-4 text-sm leading-6 text-gray-600 flex flex-col justify-center items-center mx-auto">
                                                         <Dialog>
                                                             <DialogTrigger
@@ -226,32 +232,32 @@ export default function Table({ auth, categories }) {
                                                                 ) : (
                                                                     <label
                                                                         htmlFor="file-upload"
-                                                                        className="relative cursor-pointer rounded-md font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                                                                        className="relative cursor-pointer rounded-md font-semibold "
                                                                     >
                                                                         <div className="">
-                                                                            <span>
-                                                                                Ön
-                                                                                görünüş
-                                                                                fotoğraf
-                                                                                yükle
-                                                                                <br />
-                                                                                PNG,
-                                                                                JPG,
-                                                                                GIF,
-                                                                                WEBP
-                                                                                ve
-                                                                                8MB
-                                                                                kadar
+                                                                            Ön
+                                                                            görünüş
+                                                                            fotoğraf
+                                                                            yükle
+                                                                            <br />
+                                                                            Sonra
+                                                                            <span className=" text-indigo-600">
+                                                                                {' '}WEBP    {' '}
                                                                             </span>
+                                                                            formatına
+                                                                            çeririlir
                                                                         </div>
                                                                     </label>
                                                                 )}
                                                             </DialogTrigger>
                                                             {closeModal && (
-                                                                <DialogContent className="max-w-max h-fit">
+                                                                <DialogContent className="max-w-screen-lg  overflow-scroll">
                                                                     <DialogHeader>
                                                                         <DialogDescription>
                                                                             <CropImage
+                                                                                closeModals={
+                                                                                    closeModals
+                                                                                }
                                                                                 updateAvatar={
                                                                                     updateAvatar
                                                                                 }
@@ -279,7 +285,7 @@ export default function Table({ auth, categories }) {
                                                             type="text"
                                                             id="username"
                                                             value={data.title}
-                                                            autoComplete={'off'}
+                                                            autoComplete={"off"}
                                                             onChange={
                                                                 handleChangeName
                                                             }

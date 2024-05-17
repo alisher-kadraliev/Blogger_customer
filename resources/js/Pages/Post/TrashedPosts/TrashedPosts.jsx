@@ -72,7 +72,6 @@ export default function TrashedPosts({ trashedPosts }) {
                     ))}
                 </TableBody>
             </Table>
-            <Toaster />
         </div>
     );
 }

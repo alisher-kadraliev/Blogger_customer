@@ -4,18 +4,18 @@ import ReactCrop, { centerCrop, makeAspectCrop } from "react-image-crop";
 import toast from "react-hot-toast";
 import PrimaryButton from "@/Components/PrimaryButton.jsx";
 import setCanvasPreview from "@/Pages/Post/CreateTable/setCanvasPreview.js";
-import {useForm} from "@inertiajs/react";
 
 const MIN_DIMENSION = 150;
 const ASPECT_RATIO = 16 / 9;
 
-export default function CropImage({ Toaster, updateAvatar }) {
+export default function CropImage({ Toaster, updateAvatar,closeModals}) {
     const [imgSrc, setImgSrc] = useState("");
     const [crop, setCrop] = useState();
-    const [image, setImage] = useState(null);
     const [errorImg, setErrorImage] = useState("");
     const imgRef = useRef(null);
     const previewCanvasRef = useRef(null);
+    const [imageDetails,setImageDetails] = useState({})
+
     const onSelectFile = (e) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -41,7 +41,6 @@ export default function CropImage({ Toaster, updateAvatar }) {
             setImgSrc(imageUrl);
         });
         reader.readAsDataURL(file);
-
     };
 
     const onImageLoaded = (image) => {
@@ -62,8 +61,19 @@ export default function CropImage({ Toaster, updateAvatar }) {
         if (!previewCanvasRef.current) {
             return;
         }
-        const dataUrl = previewCanvasRef.current.toDataURL();
-        updateAvatar(dataUrl);
+        const canvas = previewCanvasRef.current;
+        const dataUrl = canvas.toDataURL()
+        updateAvatar(dataUrl)
+        canvas.toBlob((blob) => {
+            if(blob){
+                setImageDetails({
+                    width:canvas.width,
+                    height:canvas.height,
+                    format:blob.type,
+                    size:(blob.size / 1024).toFixed(2) + " KB",
+                })
+            }
+        })
     };
 
     const onLoadImg = (e) => {
@@ -80,8 +90,7 @@ export default function CropImage({ Toaster, updateAvatar }) {
         const centeredCrop = centerCrop(crop, width, height);
         setCrop(centeredCrop);
     };
-    const { data, setData, post, errors } = useForm({
-    });
+
     return (
         <div>
             <input
@@ -94,6 +103,7 @@ export default function CropImage({ Toaster, updateAvatar }) {
                 accept="image/*"
                 onChange={onSelectFile}
             />
+
             {errorImg && <p className="text-red-500">{errorImg}</p>}
             <div className="flex justify-start py-7 items-center gap-10 max-lg:flex-col">
                 {imgSrc && (
@@ -110,7 +120,6 @@ export default function CropImage({ Toaster, updateAvatar }) {
                         <img
                             ref={imgRef}
                             src={imgSrc}
-                            alt=""
                             onLoad={onLoadImg}
                         />
                     </ReactCrop>
@@ -120,16 +129,30 @@ export default function CropImage({ Toaster, updateAvatar }) {
                     <canvas
                         ref={previewCanvasRef}
                         style={{
-                            display: "none",
+                            display:'none',
                             border: "1px solid black",
                             objectFit: "contain",
                         }}
                     ></canvas>
                 </div>
             </div>
+            <hr/>
+            <br/>
+            <div className="flex gap-10 items-center">
             {imgSrc && (
                 <PrimaryButton onClick={handleSave}>Foto Kırpmak</PrimaryButton>
             )}
+            <div>
+                    <div className="flex gap-3">
+                        <p><span className="font-bold">Genişlik:</span> {imageDetails.width}px</p>
+                        <p><span className="font-bold">Yükseklik:</span> {imageDetails.height}px</p>
+                        <p><span className="font-bold">Format:</span> {imageDetails.format}</p>
+                        <p><span className="font-bold">Boyut:</span> {imageDetails.size}</p>
+                    </div>
+            </div>
+                <PrimaryButton className="ml-auto" onClick={closeModals}>Kapat</PrimaryButton>
+            </div>
+
         </div>
     );
 }
