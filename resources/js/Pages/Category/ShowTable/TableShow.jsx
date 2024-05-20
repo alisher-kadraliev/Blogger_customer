@@ -300,13 +300,7 @@ const TableShow = ({ categories, auth }) => {
                                         ❓
                                     </span>
                                     <span className="text-52">
-                                        Category bulunamadı {""}
-                                        <Link
-                                            href={route("category.create")}
-                                            className="text-blue-500 underline font-bold"
-                                        >
-                                            Ekle
-                                        </Link>
+                                        Category bulunamadı
                                     </span>
                                 </div>
                             )}

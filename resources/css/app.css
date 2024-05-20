@@ -80,10 +80,12 @@
     }
     .h1{
         font-family: 'Quincy-Italic', sans-serif!important;
-
+        font-size: 48px;
     }
     .h2{
         font-family: 'Quincy-Regular', sans-serif!important;
+        font-size: 28px;
+        font-weight: 700;
     }
     label {
         @apply h-6 relative inline-block;
@@ -218,4 +220,13 @@ input[type=number] {
 
 .layout-transition{
     transform: translate(120px, 50%);
+}
+
+@media (max-width: 768px) {
+    .h1{
+        font-size: 34px;
+    }
+    .h2{
+        font-size: 20px;
+    }
 }

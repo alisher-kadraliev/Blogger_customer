@@ -158,7 +158,7 @@ class PostController extends Controller
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
-        $imageName = uniqid() . '.webp';
+        $imageName = uniqid() . '.png';
         Storage::disk('public')->put('posts/' . $imageName, base64_decode($image));
         $validatedData['image'] = 'posts/' . $imageName;
     }

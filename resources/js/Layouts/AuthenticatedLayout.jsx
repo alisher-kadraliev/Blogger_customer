@@ -78,6 +78,25 @@ export default function Authenticated({ user, children }) {
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
+                    <hr className="border border-gray-300 w-full"/>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Link
+                                    href={route("homepage.index")}
+                                    className={`${route().current("homepage.index") ? " bg-black text-accent-foreground transition-colors hover:text-foreground " : " text-muted-foreground "} flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8`}
+                                >
+                                    <Home
+                                        className={`${route().current("homepage.index") ? "text-neutral-100 transition-all duration-300 ease-in-out hover:scale-110 " : " text-muted-foreground "}  w-5 h-5`}
+                                    />
+                                    <span className="sr-only">Genel Sayfa</span>
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                                Genel Sayfa
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </nav>
             </aside>
             <div className="flex flex-col sm:gap-4 sm:pl-14">

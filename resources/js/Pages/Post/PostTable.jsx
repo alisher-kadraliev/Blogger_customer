@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
 import { useTranslation } from "react-i18next";
 import slugify from "slugify";
-import Paginate from "@/Pages/Post/Paginate.jsx";
 
 import {
     ArrowBigUpDash,
@@ -40,8 +39,6 @@ import {
 import {
     Dialog,
     DialogContent,
-    DialogDescription,
-    DialogHeader,
     DialogTitle,
     DialogTrigger,
 } from "@/Components/ui/dialog";
@@ -54,15 +51,11 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/Components/ui/sheet";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover";
+import { Popover } from "@/Components/ui/popover";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import TrashedPosts from "@/Pages/Post/TrashedPosts/TrashedPosts.jsx";
 import TextInput from "@/Components/TextInput.jsx";
 import SecondaryButton from "@/Components/SecondaryButton.jsx";
@@ -163,8 +156,7 @@ const PostTable = ({
     };
     const handleSaveAlt = (postId, imageAlt) => {
         if (
-            imageAlt !==
-            posts.data.find((post) => post.id === postId).image_alt
+            imageAlt !== posts.data.find((post) => post.id === postId).image_alt
         ) {
             router.patch(`/posts/${postId}/update`, { image_alt: imageAlt });
         }
@@ -375,9 +367,7 @@ const PostTable = ({
                                             {item.title}
                                         </TableCell>
                                         <TableCell>
-                                            <div
-                                                className="bg-gray-100 text-gray-600 rounded-md px-2 py-1 text-sm w-fit"
-                                            >
+                                            <div className="bg-gray-100 text-gray-600 rounded-md px-2 py-1 text-sm w-fit">
                                                 {item.category.name}
                                             </div>
                                         </TableCell>
@@ -524,37 +514,49 @@ const PostTable = ({
                                                                                                 />
                                                                                             </div>
                                                                                         </DialogTrigger>
-                                                                                        <DialogContent>
+                                                                                        <DialogContent className="max-w-">
                                                                                             <DialogTitle>
                                                                                                 <div className="flex flex-row items-center gap-3">
-                                                                                                <div className="w-1/4">Metin alt: </div>
-                                                                                                <input
-                                                                                                    className="border-none text-gray-500 focus:border-none border-white focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
-                                                                                                    type="text"
-                                                                                                    value={
-                                                                                                        isEditing[
-                                                                                                            item
-                                                                                                                .id
-                                                                                                        ]
-                                                                                                            ? isEditing[
-                                                                                                                  item
-                                                                                                                      .id
-                                                                                                              ]
-                                                                                                                  .image_alt
-                                                                                                            : ""
-                                                                                                    }
-                                                                                                    onChange={e => handleChangeAlt(item.id,e.target.value)}
-                                                                                                    onBlur={() =>
-                                                                                                        handleSaveAlt(
-                                                                                                            item.id,
+                                                                                                    <div className="w-1/4">
+                                                                                                        Metin
+                                                                                                        alt:
+                                                                                                    </div>
+                                                                                                    <input
+                                                                                                        className="border-none text-gray-500 focus:border-none border-white focus:outline-none focus:ring-0 focus:border-transparent w-full text-lg"
+                                                                                                        type="text"
+                                                                                                        value={
                                                                                                             isEditing[
                                                                                                                 item
                                                                                                                     .id
+                                                                                                            ]
+                                                                                                                ? isEditing[
+                                                                                                                      item
+                                                                                                                          .id
+                                                                                                                  ]
+                                                                                                                      .image_alt
+                                                                                                                : ""
+                                                                                                        }
+                                                                                                        onChange={(
+                                                                                                            e,
+                                                                                                        ) =>
+                                                                                                            handleChangeAlt(
+                                                                                                                item.id,
+                                                                                                                e
+                                                                                                                    .target
+                                                                                                                    .value,
+                                                                                                            )
+                                                                                                        }
+                                                                                                        onBlur={() =>
+                                                                                                            handleSaveAlt(
+                                                                                                                item.id,
+                                                                                                                isEditing[
+                                                                                                                    item
+                                                                                                                        .id
                                                                                                                 ]
-                                                                                                                .image_alt,
-                                                                                                        )
-                                                                                                    }
-                                                                                                />
+                                                                                                                    .image_alt,
+                                                                                                            )
+                                                                                                        }
+                                                                                                    />
                                                                                                 </div>
                                                                                             </DialogTitle>
                                                                                             <img
@@ -565,8 +567,20 @@ const PostTable = ({
                                                                                                 alt={
                                                                                                     item.image_alt
                                                                                                 }
-                                                                                                className=""
                                                                                             />
+                                                                                            <hr className="mt-5"/>
+                                                                                            <div className="mt-2">
+                                                                                                <p>Değiştirmek için alta tıkla 👇</p>
+                                                                                                <input
+                                                                                                    type="file"
+                                                                                                    className="block cursor-pointer
+        file:mr-4 file:py-2 file:px-4 file:rounded-md
+        file:border-0 border-white focus:outline-none file:text-sm file:font-semibold
+        file:bg-gray-900 file:text-white
+        hover:file:bg-gray-800 mt-4"
+                                                                                                    accept="image/*"
+                                                                                                />
+                                                                                            </div>
                                                                                         </DialogContent>
                                                                                     </Dialog>
 
@@ -1149,7 +1163,6 @@ const PostTable = ({
                             </span>
                         </div>
                     )}
-
                 </TabsContent>
                 <TabsContent value="trashed">
                     <TrashedPosts trashedPosts={trashedPosts} />

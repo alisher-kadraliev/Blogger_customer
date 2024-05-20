@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -30,8 +31,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/category/create', [CategoryController::class, 'create'])->name('category.create');
     Route::post('/category/store', [CategoryController::class, 'store'])->name('category.store');
     Route::delete('/category/{category}/delete', [CategoryController::class, 'destroy'])->name('category.destroy');
+    Route::get('/homepage',[SettingController::class,'index'])->name('homepage.index');
 });
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
+Route::get('/blogs', [FrontController::class, 'blogs'])->name('front.blogs');
+Route::get('/blog', [FrontController::class, 'blog'])->name('front.blog');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
