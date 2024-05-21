@@ -111,7 +111,7 @@ export default function Setting(){
         <h2 className="text-center text-3xl mb-6 font-bold">
             Sosyal Medya
         </h2>
-        <div className="flex flex-row flex-wrap gap-4 max-lg:flex-col justify-between">
+        <div className="grid-cols-4 grid max-lg:grid-cols-2 max-md:grid-cols-1 flex-wrap gap-4 max-lg:flex-col justify-between">
             <div>
                 <label className="block text-md font-bold leading-6 text-gray-900">
                     Facebook

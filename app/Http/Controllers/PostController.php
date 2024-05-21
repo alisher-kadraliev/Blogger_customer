@@ -81,6 +81,7 @@ class PostController extends Controller
             'published' => 'sometimes|nullable|boolean',
             'views' => 'sometimes|nullable|integer',
             'image_alt' => 'sometimes|nullable|string',
+            'image' => 'sometimes|nullable|image',
             'category_id' => 'sometimes|required|exists:categories,id',
         ]);
         if ($request->has('title')) {
@@ -88,6 +89,9 @@ class PostController extends Controller
         }
         if ($request->has('image_alt')) {
             $post->image_alt = $validatedData["image_alt"];
+        }
+        if ($request->has('image')) {
+            $post->image = $validatedData["image"];
         }
         if ($request->has('status')) {
             $post->status = $validatedData['status'];
@@ -158,7 +162,7 @@ class PostController extends Controller
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace('data:image/png;base64,', '', $image);
         $image = str_replace(' ', '+', $image);
-        $imageName = uniqid() . '.png';
+        $imageName = uniqid()  . '.png';
         Storage::disk('public')->put('posts/' . $imageName, base64_decode($image));
         $validatedData['image'] = 'posts/' . $imageName;
     }
@@ -178,35 +182,6 @@ class PostController extends Controller
         return redirect()->route('post.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Post $post)
-    {
-        return inertia('Post/Show', [
-            'post' => $post,
-        ]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Post $post)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Post $post)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Post $post)
     {
         $post->delete();

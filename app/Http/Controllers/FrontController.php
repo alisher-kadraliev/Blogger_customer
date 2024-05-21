@@ -17,10 +17,20 @@ class FrontController extends Controller
     {
         $cats = Category::all();
         $posts = Post::latest()->paginate(6)->onEachSide(1);
+        $posts->getCollection()->transform(function ($post) {
+            $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
+            return $post;
+        });
         return Inertia::render('Front/Pages/Blogs',['posts' => $posts,'cats' => $cats]);
     }
-    public function blog()
+    public function blog($slug)
     {
-        return Inertia::render('Front/Pages/Blog');
+        $cats = Category::all();
+        $post = Post::where('slug', $slug)->first();;
+
+        if($post){
+            $post->image_url = $post->image ? asset('storage/' . $post->image) : null;
+        }
+        return Inertia::render('Front/Pages/Blog',['post' => $post,'cats' => $cats]);
     }
 }

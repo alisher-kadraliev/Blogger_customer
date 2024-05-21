@@ -47,14 +47,13 @@ export default function Navbar() {
                         </NavigationMenu>
                     </div>
                     <div className="flex mx-auto justify-center items-center w-1/3">
-                        <a href="#">
-                            <span className="sr-only">Your Company</span>
+                        <Link href={route('front.index')}>
                             <img
                                 className="h-20 w-auto"
                                 src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                                alt=""
+                                alt="Ibrahim Katlav Logo"
                             />
-                        </a>
+                        </Link>
                     </div>
                     <div className="flex lg:hidden">
                         <button

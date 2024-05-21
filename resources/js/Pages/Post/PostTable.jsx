@@ -72,6 +72,8 @@ const PostTable = ({
     const [isEditing, setIsEditing] = useState({});
     const [isHoveredText, setIsHoveredText] = useState(false);
     const [search, setSearch] = useState("");
+    const [imagePreview,setImagePreview] = useState({})
+    const [isEditingImage,setIsEditingImage] = useState({})
     const handleSearch = (e) => {
         const value = e.target.value;
         setSearch(value);
@@ -95,6 +97,7 @@ const PostTable = ({
                 views: post.views,
                 category: post.category.id,
                 image_alt: post.image_alt,
+                image: post.image,
                 description: post.description,
             };
             return acc;
@@ -161,6 +164,7 @@ const PostTable = ({
             router.patch(`/posts/${postId}/update`, { image_alt: imageAlt });
         }
     };
+
     const handleSaveMetaD = (postId, metaD) => {
         if (
             metaD !==
@@ -308,6 +312,33 @@ const PostTable = ({
         );
     }
 
+    const handleChangeImage = (id,e) => {
+        const file = e.target.files[0]
+        if(file){
+            const reader = new FileReader()
+            reader.onload = () => {
+                setImagePreview((prev) => ({
+                    ...prev,
+                    [id]:reader.result,
+                }))
+                setIsEditingImage((prev) => ({
+                    ...prev,
+                    [id]: {...prev[id],image:file}
+                }))
+            }
+            reader.readAsDataURL(file)
+        }
+    }
+
+    const handleSaveImage = (postId) => {
+        const formData = new FormData()
+        formData.append('image',isEditingImage[postId].image)
+        router.patch(`/posts/${postId}/update`,formData ,{
+            headers:{
+                'Content-Type':'multipart/form-data',
+            }
+        })
+    }
     return (
         <React.Fragment>
             <Tabs defaultValue="valid" className="w-full">
@@ -572,6 +603,7 @@ const PostTable = ({
                                                                                             <div className="mt-2">
                                                                                                 <p>Değiştirmek için alta tıkla 👇</p>
                                                                                                 <input
+                                                                                                    onChange={e => handleChangeImage(item.id,e)}
                                                                                                     type="file"
                                                                                                     className="block cursor-pointer
         file:mr-4 file:py-2 file:px-4 file:rounded-md
@@ -580,6 +612,11 @@ const PostTable = ({
         hover:file:bg-gray-800 mt-4"
                                                                                                     accept="image/*"
                                                                                                 />
+                                                                                                {imagePreview[item.id] && (
+                                                                                                    <img src={imagePreview[item.id]}
+                                                                                                         alt="" />
+                                                                                                    )}
+                                                                                                <button onClick={() => handleSaveImage(item.id)}>save</button>
                                                                                             </div>
                                                                                         </DialogContent>
                                                                                     </Dialog>

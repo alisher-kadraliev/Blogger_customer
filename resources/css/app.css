@@ -79,11 +79,11 @@
         width: 0px;
     }
     .h1{
-        font-family: 'Quincy-Italic', sans-serif!important;
+        font-family: 'Lora-BoldItalic', sans-serif!important;
         font-size: 48px;
     }
     .h2{
-        font-family: 'Quincy-Regular', sans-serif!important;
+        font-family: 'Lora-Regular', sans-serif!important;
         font-size: 28px;
         font-weight: 700;
     }
@@ -144,12 +144,12 @@ input[type=number] {
     src: url('/public/fonts/inter/Inter-Regular.ttf') format('truetype');
 }
 @font-face {
-    font-family: 'Quincy-Italic';
-    src: url('/public/fonts/Quincy/italic.otf') format('truetype');
+    font-family: 'Lora-BoldItalic';
+    src: url('/public/fonts/Quincy/Lora-BoldItalic.ttf') format('truetype');
 }
 @font-face {
-    font-family: 'Quincy-Regular';
-    src: url('/public/fonts/Quincy/normal.otf') format('truetype');
+    font-family: 'Lora-Regular';
+    src: url('/public/fonts/Quincy/Lora-Regular.ttf') format('truetype');
 }
 
 .rdw-dropdown-optionwrapper{

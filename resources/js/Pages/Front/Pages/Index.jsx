@@ -12,10 +12,13 @@ export default function Index(){
                         <img
                             src="/image/image-asset.jpeg"
                             className="w-1/3 shadow-xl max-lg:w-full"
-                            alt=""
+                            width="420"
+                            height="420"
+                            alt="Ibrahim Katlav"
+
                         />
                         <div className="flex flex-col gap-6 w-1/2 max-lg:w-full">
-                            <h1 className="text-[48px]">
+                            <h1 className="text-[48px] h1">
                                 Earn a full time income as a web designer
                             </h1>
                             <p className="text-xl text-frontText">
