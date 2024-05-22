@@ -35,7 +35,7 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 Route::get('/blogs', [FrontController::class, 'blogs'])->name('front.blogs');
-Route::get('/blog/{slug}', [FrontController::class, 'blog'])->name('front.blog');
+Route::get('/blogs/{slug}', [FrontController::class, 'blog'])->name('front.blog');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

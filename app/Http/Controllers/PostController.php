@@ -8,6 +8,8 @@ use App\Rules\Base64Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use Intervention\Image\Image;
+use Spatie\ImageOptimizer\OptimizerChainFactory;
 
 class PostController extends Controller
 {
@@ -157,15 +159,35 @@ class PostController extends Controller
             'image_alt' => 'nullable|string',
         ]);
 
-        if ($request->has('image')) {
-        $image = $request->input('image'); // Your base64 encoded image
-        $image = str_replace('data:image/png;base64,', '', $image);
-        $image = str_replace('data:image/png;base64,', '', $image);
-        $image = str_replace(' ', '+', $image);
-        $imageName = uniqid()  . '.png';
-        Storage::disk('public')->put('posts/' . $imageName, base64_decode($image));
-        $validatedData['image'] = 'posts/' . $imageName;
-    }
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imageName = uniqid() . '.webp';
+
+            // Convert to webp
+            $imagePath = $image->getRealPath();
+            $imageWebp = Image::make($imagePath)->encode('webp', 90); // 90 is the quality
+
+            // Optimize the webp image
+            $optimizerChain = OptimizerChainFactory::create();
+            $optimizedImagePath = storage_path('app/public/posts/' . $imageName);
+            $imageWebp->save($optimizedImagePath);
+            $optimizerChain->optimize($optimizedImagePath);
+
+            // Save the image path to validated data
+            $validatedData['image'] = 'posts/' . $imageName;
+        }
+
+
+//        if ($request->has('image')) {
+//        $image = $request->input('image'); // Your base64 encoded image
+//        $image = str_replace('data:image/png;base64,', '', $image);
+//        $image = str_replace('data:image/png;base64,', '', $image);
+//        $image = str_replace(' ', '+', $image);
+//        $imageName = uniqid()  . '.png';
+//        Storage::disk('public')->put('posts/' . $imageName, base64_decode($image));
+//        $validatedData['image'] = 'posts/' . $imageName;
+//    }
 
 
 //        if ($request->has('image')) {

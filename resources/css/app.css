@@ -209,6 +209,9 @@ input[type=number] {
     margin-right: 0;
     font-weight: bold;
 }
+.editor span {
+    font-family: "Inter-Regular", sans-serif !important;
+}
 .editor a{
     color: #1a73e8;
     text-decoration: underline;
@@ -230,3 +233,5 @@ input[type=number] {
         font-size: 20px;
     }
 }
+
+

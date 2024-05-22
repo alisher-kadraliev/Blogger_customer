@@ -7,7 +7,7 @@ export default function Index({ posts, cats }) {
         <>
             <Head title="Home" />
             <Layout>
-                <div className="w-1/2 mb-10 max-lg:w-full max-lg:px-10 flex flex-col justify-center mx-auto items-center gap-3">
+                <div className="w-1/2 mb-10 mt-32 max-lg:w-full max-lg:px-10 flex flex-col justify-center mx-auto items-center gap-3">
                     <h1 className="text-center h1 mb-4">
                         Articles about inclusive design and business
                     </h1>
